@@ -9,7 +9,7 @@ const WORDS=[
 {id:'room',en:'room',ar:'غرفة',ipa:'/ruːm/',ph:'روم',example:'I clean my room.',kind:'room'}
 ];
 const WORLDS=[['🌅','My Day','حياتي اليومية'],['🌷','My Life','دراستي ووقتي'],['🌆','Outside','خارج البيت'],['💬','Talk to Me','المحادثة البسيطة'],['💼','My Future','المستقبل والعمل'],['👑','Confident English','الثقة في الكلام']];
-const DEFAULT={name:'ريم',xp:120,streak:7,worldProgress:16,step:1,vocabIndex:0,saved:['water'],weak:['shower','water'],arabicPhonetic:true,accent:'en-US',lessonDone:false,quizBest:0};
+const DEFAULT={name:'ريم',xp:120,streak:7,worldProgress:16,step:1,vocabIndex:0,saved:['water'],weak:['shower','water'],arabicPhonetic:true,accent:'en-US',lessonDone:false,quizBest:0,assessmentStatus:'not_ready',teacherNotes:'',teacherMastered:[],teacherReview:[],teacherAssessmentTypes:['oral','meaning','pronunciation']};
 let state=Object.assign({},DEFAULT,JSON.parse(localStorage.getItem('reemDesignLock')||'{}'));
 let recorder=null,chunks=[],recordUrl=null,gameIndex=0,gameAnswered=false,quizIndex=0,quizCorrect=0,quizAnswered=false,arranged=[];
 function save(){localStorage.setItem('reemDesignLock',JSON.stringify(state));}
