@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 650" role="img">
+<defs>
+ <linearGradient id="bg5" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#241a4a"/><stop offset=".55" stop-color="#443065"/><stop offset="1" stop-color="#f0929f"/></linearGradient>
+ <linearGradient id="warm5" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffd6b0"/><stop offset="1" stop-color="#ff8d9d"/></linearGradient>
+ <filter id="sh5"><feDropShadow dx="0" dy="18" stdDeviation="16" flood-opacity=".25"/></filter>
+</defs>
+<rect width="900" height="650" rx="54" fill="url(#bg5)"/>
+<circle cx="735" cy="115" r="145" fill="#ffcc9c" opacity=".18"/>
+<circle cx="145" cy="535" r="185" fill="#8d6cff" opacity=".12"/>
+<g filter="url(#sh5)">
+<path d="M180 245h220q80 0 80 70v70" fill="none" stroke="#d9d8ec" stroke-width="34" stroke-linecap="round"/>
+<path d="M380 245q0-85 90-85h95" fill="none" stroke="#d9d8ec" stroke-width="34" stroke-linecap="round"/>
+<path d="M485 315v88" stroke="#70d8ff" stroke-width="20" stroke-linecap="round"/>
+<path d="M315 390q70-80 150 0l55 50q35 32 0 65t-70 0l-45-40-40 30q-45 32-75-12t25-93z" fill="#f3b9aa"/>
+<circle cx="560" cy="365" r="17" fill="#d8f7ff"/><circle cx="600" cy="400" r="22" fill="#d8f7ff"/><circle cx="535" cy="425" r="13" fill="#d8f7ff"/>
+<rect x="165" y="500" width="570" height="55" rx="24" fill="#4b3b6c"/>
+</g>
+</svg>
