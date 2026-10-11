@@ -41,3 +41,39 @@
  .teacher-stats{gap:10px}.teacher-stats>div{padding:14px}.teacher-stats b{font-size:21px}.teacher-stats span{font-size:10px}.assessment-types{gap:8px}.assessment-types button{padding:14px 6px}.assessment-types button b{font-size:23px}.assessment-types button span{font-size:10px}
 }
 @media(max-width:370px){.wrap{padding-left:7px;padding-right:7px}.hero h1{font-size:21px}.assessment-types{grid-template-columns:repeat(3,1fr)}}
+/* REFERENCE LOCK V3 — mobile follows approved storyboard composition */
+@media(max-width:899px){
+ .wrap{width:min(390px,100%);padding:8px 9px 86px}
+ .topbar{margin-bottom:7px}.brand-logo{width:34px;height:34px}.brand-copy strong{font-size:13px}
+ .hero{min-height:510px;border-radius:22px}
+ .hero-art{height:285px}
+ .avatar-scene{width:280px}
+ .hero-copy{margin-top:-18px;padding:0 12px 13px}
+ .hero-copy .kicker{font-size:9px;padding:5px 9px}
+ .hero h1{font-size:23px;margin:6px 0 3px}
+ .hero p{font-size:10px;margin-bottom:8px}
+ .today-card{padding:10px;border-radius:16px}
+ .today-head strong{font-size:16px}
+ .primary{min-height:42px;border-radius:13px}
+ .stats{margin-top:6px}.stat{min-height:55px;display:grid;place-content:center}
+ .section-head{margin-top:14px}
+ .world-card{min-height:112px}
+ .quick-actions{margin-top:2px}
+}
+@media(min-width:900px){
+ .wrap{width:min(1240px,calc(100% - 64px));padding:20px 24px 110px}
+ .hero{min-height:540px;grid-template-columns:1fr 1.08fr;padding:0;border-radius:28px}
+ .hero-art{order:0;min-height:540px;height:540px;background:radial-gradient(circle at 50% 52%,rgba(255,173,123,.34),transparent 40%)}
+ .avatar-scene{width:min(480px,92%)}
+ .hero-copy{padding:46px;text-align:right}
+ .hero-copy .kicker{font-size:12px}
+ .hero h1{font-size:48px;line-height:1.15;margin:12px 0 7px}
+ .hero p{font-size:16px;margin-bottom:20px}
+ .today-card{max-width:620px;padding:20px;border-radius:22px}
+ .today-head strong{font-size:27px}.today-meta{margin:12px 0}.today-meta span{font-size:11px}
+ .primary.full{min-height:54px;font-size:16px}
+ .stats{grid-template-columns:repeat(4,1fr);gap:14px}.stat{min-height:88px}
+ .world-preview{grid-template-columns:1.35fr .65fr}.world-card{min-height:210px}
+ .quick-actions{grid-template-columns:1fr 1fr}
+ .teacher-entry{text-align:left}
+}
