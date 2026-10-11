@@ -4,7 +4,7 @@ function vocab(){
  '<div class="lesson-top"><div><span class="kicker">2 / 7</span><h2>الكلمات الجديدة</h2></div><span>'+(i+1)+' / '+WORDS.length+'</span></div>'+
  '<div class="big-progress"><i style="width:'+((i+1)/WORDS.length*100)+'%"></i></div>'+
  '<section class="vocab-card glass"><div class="visual-pane">'+art(w.kind)+'<button class="save-btn '+(saved?'saved':'')+'" onclick="toggleSave(\''+w.id+'\')">'+(saved?'♥':'♡')+'</button></div>'+
- '<div class="vocab-copy"><span class="kicker">My Morning</span><h1 dir="ltr">'+esc(w.en)+'</h1><div class="ipa" dir="ltr">'+w.ipa+'</div><h2>'+w.ar+'</h2>'+(state.arabicPhonetic?'<span class="ar-phonetic">'+w.ph+'</span>':'')+
+ '<div class="vocab-copy"><span class="kicker">My Morning</span><h1 dir="ltr">'+esc(w.en)+'</h1><h2>'+w.ar+'</h2>'+(state.arabicPhonetic?'<span class="ar-phonetic">'+w.ph+'</span>':'')+
  '<div class="example" dir="ltr">'+esc(w.example)+'</div><div class="audio-actions"><button class="primary" onclick="speakWord(\''+esc(w.en)+'\',false)">🔊 عادي</button><button class="secondary" onclick="speakWord(\''+esc(w.en)+'\',true)">🐢 بطيء</button><button class="soft" onclick="startRecord(\''+esc(w.en)+'\')">🎙️ قوليها</button></div><div id="recordBox" class="record-box">اسمعي الصوت الصحيح، سجلي صوتك، ثم قارني بين الاثنين.</div></div></section>'+
  '<div class="pager"><button '+(i===0?'disabled':'')+' onclick="prevWord()">→ السابق</button><div class="pager-mid"><b>'+(i+1)+' / '+WORDS.length+'</b><small>7 كلمات فقط اليوم</small></div><button class="primary" onclick="nextWord()">'+(i===WORDS.length-1?'أنهيت الكلمات ✓':'التالي ←')+'</button></div></div>');
 }
@@ -32,7 +32,20 @@ function mouth(){
  return '<svg viewBox="0 0 420 260"><rect width="420" height="260" rx="28" fill="#f1ad99"/><path d="M72 137c55-58 94-66 138-28 44-38 83-30 138 28-44 57-93 71-138 42-45 29-94 15-138-42Z" fill="#df6282"/><path d="M112 137c35-17 65-20 98-7 33-13 64-10 98 7-30 27-65 36-98 24-34 12-68 3-98-24Z" fill="#6f263d"/><path d="M132 139c26-9 53-10 78-1 26-9 51-8 78 1-23 18-49 24-78 18-29 6-55 0-78-18Z" fill="#fff8f5"/></svg>';
 }
 function phonics(){
- shell('<div class="lesson-shell">'+topbar('lessonMap()')+'<div class="lesson-top"><div><span class="kicker">4 / 7</span><h2>سر النطق 🔤</h2></div><span>SH = ش</span></div><div class="big-progress"><i style="width:57%"></i></div><section class="phonics-card glass"><span class="kicker">Phonics & Pronunciation</span><h1>صوت SH</h1><p style="color:var(--muted);line-height:1.8">نسمعه في بداية <b>shower</b> وفي نهاية <b>wash</b>.</p><div class="sound-hero"><div class="sound-mouth">'+mouth()+'</div><div class="sound-list"><div class="sound-example"><span><b dir="ltr">shower</b><small style="display:block;color:var(--muted)">/ˈʃaʊər/</small></span><button class="icon-btn" onclick="speakWord(\'shower\',false)">🔊</button></div><div class="sound-example"><span><b dir="ltr">wash</b><small style="display:block;color:var(--muted)">/wɒʃ/</small></span><button class="icon-btn" onclick="speakWord(\'wash\',false)">🔊</button></div></div></div><div class="notice">💡 نسمع الصوت داخل كلمات نعرفها، ثم نكرره. ما نحول الدرس إلى مادة صوتيات ثقيلة.</div><button class="primary full" style="margin-top:14px" onclick="advance(4,grammar)">فهمت الصوت، التالي ←</button></section></div>');
+ shell('<div class="lesson-shell">'+topbar('lessonMap()')+
+ '<div class="lesson-top"><div><span class="kicker">4 / 7</span><h2>سر النطق 🔤</h2></div><span>SH = ش</span></div>'+
+ '<div class="big-progress"><i style="width:57%"></i></div>'+
+ '<section class="phonics-card glass">'+
+ '<span class="kicker">English Letter Sounds</span>'+
+ '<h1>الحرفان SH</h1>'+
+ '<p style="color:var(--muted);line-height:1.9">في الإنجليزي أحيانًا حرفان يجتمعان ويعطون <b>صوتًا واحدًا جديدًا</b>. هنا <b>S + H = SH</b>، وصوتهم مع بعض قريب من <b>«ش»</b>.</p>'+
+ '<div class="sound-hero"><div class="sound-mouth">'+mouth()+'</div><div class="sound-list">'+
+ '<div class="sound-example"><span><b dir="ltr" style="font-size:22px"><mark style="background:rgba(255,111,158,.22);color:#fff;border-radius:6px;padding:0 3px">SH</mark>OWER</b><small style="display:block;color:var(--muted)">SH في بداية الكلمة = ش</small></span><button class="icon-btn" onclick="speakWord(\'shower\',false)">🔊</button></div>'+
+ '<div class="sound-example"><span><b dir="ltr" style="font-size:22px">WA<mark style="background:rgba(255,111,158,.22);color:#fff;border-radius:6px;padding:0 3px">SH</mark></b><small style="display:block;color:var(--muted)">SH في نهاية الكلمة = ش</small></span><button class="icon-btn" onclick="speakWord(\'wash\',false)">🔊</button></div>'+
+ '</div></div>'+
+ '<div class="notice"><b>ليش صار صوت SH = ش؟</b><br>لأن الإنجليزية فيها مجموعات حروف تُنطق كصوت واحد. ما نقرأ S ثم H كل واحد لحاله داخل هذه الكلمات؛ نقرأ <b>SH</b> كفريق واحد. لاحقًا بنشوف أمثلة مشابهة مثل <b>CH</b> و <b>TH</b>.</div>'+
+ '<button class="primary full" style="margin-top:14px" onclick="advance(4,grammar)">فهمت الصوت، التالي ←</button>'+
+ '</section></div>');
 }
 function grammar(){
  var lines=['I wake up early.','I drink water.','I eat breakfast.'].map(function(s){return '<div class="grammar-line"><span dir="ltr"><b>'+s+'</b></span><button class="icon-btn" onclick="speakSentence(\''+s+'\')">🔊</button></div>';}).join('');
