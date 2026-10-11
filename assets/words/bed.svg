@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 650" role="img">
+<defs>
+ <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#241a4a"/><stop offset=".55" stop-color="#443065"/><stop offset="1" stop-color="#f0929f"/></linearGradient>
+ <linearGradient id="warm2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffd6b0"/><stop offset="1" stop-color="#ff8d9d"/></linearGradient>
+ <filter id="sh2"><feDropShadow dx="0" dy="18" stdDeviation="16" flood-opacity=".25"/></filter>
+</defs>
+<rect width="900" height="650" rx="54" fill="url(#bg2)"/>
+<circle cx="735" cy="115" r="145" fill="#ffcc9c" opacity=".18"/>
+<circle cx="145" cy="535" r="185" fill="#8d6cff" opacity=".12"/>
+<g filter="url(#sh2)">
+<rect x="150" y="390" width="600" height="100" rx="28" fill="#5b395e"/>
+<rect x="195" y="215" width="510" height="210" rx="45" fill="url(#warm2)"/>
+<rect x="225" y="245" width="150" height="95" rx="28" fill="#fff3eb"/>
+<rect x="395" y="245" width="150" height="95" rx="28" fill="#f9e4e6"/>
+<path d="M195 345h510v110H195z" fill="#d97a92"/>
+<path d="M195 350q255 80 510 0v80H195z" fill="#6d4aa7" opacity=".55"/>
+<rect x="145" y="195" width="38" height="320" rx="18" fill="#7b4a55"/>
+<rect x="720" y="330" width="85" height="130" rx="16" fill="#6b455c"/><path d="M762 250l55 80H707z" fill="#ffc79d"/><rect x="752" y="310" width="20" height="55" fill="#a56e72"/>
+</g>
+</svg>
