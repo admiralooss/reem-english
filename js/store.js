@@ -39,13 +39,26 @@ window.ReemStore=(function(){
     };
   }
   function getContent(){
+    const base=baseContent();
     try{
       const saved=JSON.parse(localStorage.getItem(CONTENT_KEY)||"null");
-      if(saved&&Array.isArray(saved.categories)&&Array.isArray(saved.words))return saved;
+      if(saved&&Array.isArray(saved.categories)&&Array.isArray(saved.words)){
+        const baseById=Object.fromEntries((base.words||[]).map(w=>[w.id,w]));
+        let changed=false;
+        saved.words=saved.words.map(w=>{
+          const fresh=baseById[w.id];
+          if(fresh && (!w.image || /^https:\/\/loremflickr\.com\//i.test(String(w.image)))){
+            changed=true;
+            return Object.assign({},w,{image:fresh.image});
+          }
+          return w;
+        });
+        if(changed)localStorage.setItem(CONTENT_KEY,JSON.stringify(saved));
+        return saved;
+      }
     }catch(e){}
-    const content=baseContent();
-    localStorage.setItem(CONTENT_KEY,JSON.stringify(content));
-    return content;
+    localStorage.setItem(CONTENT_KEY,JSON.stringify(base));
+    return base;
   }
   function saveContent(content){localStorage.setItem(CONTENT_KEY,JSON.stringify(content));return content;}
 
