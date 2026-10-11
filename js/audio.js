@@ -60,7 +60,7 @@ window.ReemAudio=(function(){
     const key=wordMap[clean(text)];
     if(!key)return nativeSpeak(text,slow);
 
-    const src="./audio/words/"+key+(slow?"-slow":"")+".mp3?v=voice-jenny-1";
+    const src=new URL("./audio/words/"+key+(slow?"-slow":"")+".mp3?v=voice-jenny-2",document.baseURI).href;
     try{
       const a=new Audio();
       currentAudio=a;
