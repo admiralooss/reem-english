@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 650" role="img">
+<defs>
+ <linearGradient id="bg8" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#241a4a"/><stop offset=".55" stop-color="#443065"/><stop offset="1" stop-color="#f0929f"/></linearGradient>
+ <linearGradient id="warm8" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffd6b0"/><stop offset="1" stop-color="#ff8d9d"/></linearGradient>
+ <filter id="sh8"><feDropShadow dx="0" dy="18" stdDeviation="16" flood-opacity=".25"/></filter>
+</defs>
+<rect width="900" height="650" rx="54" fill="url(#bg8)"/>
+<circle cx="735" cy="115" r="145" fill="#ffcc9c" opacity=".18"/>
+<circle cx="145" cy="535" r="185" fill="#8d6cff" opacity=".12"/>
+<g filter="url(#sh8)">
+<ellipse cx="430" cy="390" rx="245" ry="115" fill="#f8ecdf"/><ellipse cx="430" cy="385" rx="185" ry="82" fill="#fff"/>
+<circle cx="395" cy="370" r="72" fill="#fff7db"/><circle cx="395" cy="370" r="32" fill="#ffc448"/>
+<rect x="470" y="320" width="120" height="90" rx="18" fill="#d89158" transform="rotate(8 530 365)"/>
+<rect x="650" y="250" width="105" height="145" rx="25" fill="#f5ddd0"/><path d="M750 285q70 0 55 65q-10 40-55 35" fill="none" stroke="#f5ddd0" stroke-width="22"/>
+<path d="M680 225q25-45 0-85M720 225q25-45 0-85" fill="none" stroke="#fff" stroke-width="10" opacity=".5"/>
+</g>
+</svg>
