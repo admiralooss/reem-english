@@ -48,11 +48,11 @@ function weakResult(score){
  shell('<div class="lesson-shell">'+topbar('lessonMap()')+'<section class="reward-card glass"><div class="reward-star" style="background:radial-gradient(circle,#ffb0c5,#8b5cf6)">💪</div><span class="kicker">نتيجة الاختبار</span><h1>'+score+'%</h1><p style="color:var(--muted)">قريبة جدًا يا ريم 🤍 المطلوب 80%. ما راح نعيد كل شيء؛ بنثبت النقاط اللي تحتاج مراجعة فقط.</p><div class="notice">🧠 water • shower • ترتيب I + verb</div><button class="primary full" style="margin-top:14px" onclick="review()">ابدئي المراجعة الذكية</button></section></div>');
 }
 function review(){
- var rows=state.weak.length?state.weak.map(function(id){var w=byId(id);return '<div class="review-item"><div class="review-thumb">'+art(w.kind)+'</div><div><b dir="ltr">'+w.en+'</b><small>'+w.ar+' • '+w.ipa+'</small></div><button class="icon-btn" onclick="speakWord(\''+w.en+'\',false)">🔊</button></div>';}).join(''):'<div class="notice">✨ ممتاز! ما عندك نقاط ضعف حالية.</div>';
+ var rows=state.weak.length?state.weak.map(function(id){var w=byId(id);return '<div class="review-item"><div class="review-thumb">'+art(w.kind)+'</div><div><b dir="ltr">'+w.en+'</b><small>'+w.ar+(state.arabicPhonetic?' • '+w.ph:'')+'</small></div><button class="icon-btn" onclick="speakWord(\''+w.en+'\',false)">🔊</button></div>';}).join(''):'<div class="notice">✨ ممتاز! ما عندك نقاط ضعف حالية.</div>';
  shell(topbar()+'<section class="page-head glass"><span class="kicker">Smart Review</span><h1>المراجعة الذكية 🧠</h1><p>نرجع فقط للكلمات والنقاط اللي تحتاج تثبيت.</p></section><section class="review-card glass"><h2>تحتاج تثبيت 🤍</h2><div class="review-list">'+rows+'</div><h2 style="margin-top:24px">مراجعة يومية</h2><div class="notice">لاحقًا: 3 كلمات من أمس + كلمتان من الأسبوع الماضي بنظام التكرار المتباعد.</div></section>','review');
 }
 function savedWords(){
- var rows=state.saved.map(function(id){var w=byId(id);return '<div class="review-item"><div class="review-thumb">'+art(w.kind)+'</div><div><b dir="ltr">'+w.en+'</b><small>'+w.ar+' • '+w.ipa+'</small></div><button class="icon-btn" onclick="speakWord(\''+w.en+'\',false)">🔊</button></div>';}).join('');
+ var rows=state.saved.map(function(id){var w=byId(id);return '<div class="review-item"><div class="review-thumb">'+art(w.kind)+'</div><div><b dir="ltr">'+w.en+'</b><small>'+w.ar+(state.arabicPhonetic?' • '+w.ph:'')+'</small></div><button class="icon-btn" onclick="speakWord(\''+w.en+'\',false)">🔊</button></div>';}).join('');
  shell(topbar()+'<section class="page-head glass"><span class="kicker">Saved Words</span><h1>كلماتي المحفوظة ♥</h1><p>أي كلمة تحبين ترجعين لها بسرعة تلقينها هنا.</p></section><section class="review-card glass"><div class="review-list">'+rows+'</div></section>','review');
 }
 function account(){
