@@ -47,6 +47,76 @@ function reward(score){
 function weakResult(score){
  shell('<div class="lesson-shell">'+topbar('lessonMap()')+'<section class="reward-card glass"><div class="reward-star" style="background:radial-gradient(circle,#ffb0c5,#8b5cf6)">💪</div><span class="kicker">نتيجة الاختبار</span><h1>'+score+'%</h1><p style="color:var(--muted)">قريبة جدًا يا ريم 🤍 المطلوب 80%. ما راح نعيد كل شيء؛ بنثبت النقاط اللي تحتاج مراجعة فقط.</p><div class="notice">🧠 water • shower • ترتيب I + verb</div><button class="primary full" style="margin-top:14px" onclick="review()">ابدئي المراجعة الذكية</button></section></div>');
 }
+function finishForTeacher(){
+ state.assessmentStatus='ready';
+ state.step=7;
+ save();
+ shell('<div class="lesson-shell">'+topbar('home()')+'<section class="reward-card glass"><div class="reward-star">✨</div><span class="kicker">My Morning</span><h1>خلصتِ درس اليوم يا ريم 🤍</h1><p style="color:var(--muted);line-height:1.8">ممتاز! الآن دور مراجعة بسيطة مع عبدالعزيز. ما فيه اختبار طويل ولا نسبة نجاح هنا.</p><div class="notice">⏳ الدرس جاهز لتقييم عبدالعزيز</div><button class="primary full" style="margin-top:14px" onclick="home()">العودة للرئيسية</button></section></div>');
+}
+function teacherLogin(){
+ shell('<div class="lesson-shell">'+topbar('home()')+'<section class="teacher-login glass"><div class="teacher-lock">🔐</div><span class="kicker">Teacher Mode</span><h1>ملف عبدالعزيز</h1><p>أدخل الرقم السري للدخول إلى المتابعة والتقييم.</p><input id="teacherPin" class="pin-input" inputmode="numeric" maxlength="4" type="password" placeholder="••••" onkeydown="if(event.key===\'Enter\')checkTeacherPin()"><div id="pinError"></div><button class="primary full" onclick="checkTeacherPin()">دخول</button></section></div>');
+ setTimeout(function(){var x=document.getElementById('teacherPin');if(x)x.focus();},100);
+}
+function checkTeacherPin(){
+ var x=document.getElementById('teacherPin'),e=document.getElementById('pinError');
+ if(x&&x.value==='7780'){sessionStorage.setItem('reemTeacher','1');teacherDashboard();}
+ else if(e)e.innerHTML='<div class="feedback" style="background:rgba(255,102,125,.1)">الرقم السري غير صحيح</div>';
+}
+function teacherGuard(){if(sessionStorage.getItem('reemTeacher')!=='1'){teacherLogin();return false;}return true;}
+function teacherDashboard(){
+ if(!teacherGuard())return;
+ var status=state.assessmentStatus==='approved'?'✓ معتمد':state.assessmentStatus==='ready'?'جاهز للتقييم':'قيد التعلّم';
+ var learned=Math.max(0,Math.min(7,state.vocabIndex+(state.step>2?1:0)));
+ shell('<div class="lesson-shell">'+topbar('teacherLogout()')+
+ '<section class="teacher-hero glass"><span class="kicker">Teacher Dashboard</span><h1>أهلًا عبدالعزيز 👨‍🏫</h1><p>أنت المتحكم بالتقييم والانتقال. ريم تتعلم فقط، وأنت تختار كيف تختبرها ومتى تعتمد الدرس.</p></section>'+
+ '<div class="teacher-stats"><div><b>'+learned+'/7</b><span>كلمات الدرس</span></div><div><b>'+state.step+'/7</b><span>التقدم</span></div><div><b>'+state.weak.length+'</b><span>تحتاج مراجعة</span></div><div><b>'+state.xp+'</b><span>XP</span></div></div>'+
+ '<section class="teacher-panel glass"><div class="teacher-row"><div><small>الدرس الحالي</small><h2>My Morning ☀️</h2><p>'+status+'</p></div><button class="secondary" onclick="teacherWords()">عرض الكلمات</button></div>'+
+ '<h3>اختر طريقة التقييم</h3><div class="assessment-types">'+teacherTypeButton('oral','💬','شفهي')+teacherTypeButton('meaning','🧠','معاني')+teacherTypeButton('pronunciation','🎙️','نطق')+teacherTypeButton('sentence','🧩','جمل')+teacherTypeButton('listening','🎧','استماع')+'</div>'+
+ '<button class="primary full" style="margin-top:16px" onclick="teacherAssessment()">ابدأ التقييم الذي اخترته</button>'+
+ '<button class="secondary full" style="width:100%;margin-top:9px" onclick="approveLesson()">✓ اعتماد الدرس وفتح التالي</button></section></div>');
+}
+function teacherTypeButton(id,icon,label){
+ var on=(state.teacherAssessmentTypes||[]).includes(id);
+ return '<button class="'+(on?'selected':'')+'" onclick="toggleTeacherType(\''+id+'\')"><b>'+icon+'</b><span>'+label+'</span></button>';
+}
+function toggleTeacherType(id){
+ var a=state.teacherAssessmentTypes||[];
+ var i=a.indexOf(id);if(i>=0)a.splice(i,1);else a.push(id);
+ state.teacherAssessmentTypes=a;save();teacherDashboard();
+}
+function teacherWords(){
+ if(!teacherGuard())return;
+ var rows=WORDS.map(function(w){
+  var m=(state.teacherMastered||[]).includes(w.id),r=(state.teacherReview||[]).includes(w.id);
+  return '<div class="teacher-word"><div class="review-thumb">'+art(w.kind)+'</div><div><b dir="ltr">'+w.en+'</b><small>'+w.ar+(state.arabicPhonetic?' • '+w.ph:'')+'</small></div><button class="'+(m?'mastered':'')+'" onclick="teacherMark(\''+w.id+'\',\'mastered\')">✓ أتقنت</button><button class="'+(r?'needs-review':'')+'" onclick="teacherMark(\''+w.id+'\',\'review\')">↻ مراجعة</button></div>';
+ }).join('');
+ shell('<div class="lesson-shell">'+topbar('teacherDashboard()')+'<section class="teacher-panel glass"><span class="kicker">متابعة الكلمات</span><h1>My Morning</h1><p style="color:var(--muted)">علّم كل كلمة حسب تقييمك أنت.</p><div class="teacher-word-list">'+rows+'</div></section></div>');
+}
+function teacherMark(id,type){
+ var m=state.teacherMastered||[],r=state.teacherReview||[];
+ m=m.filter(function(x){return x!==id});r=r.filter(function(x){return x!==id});
+ if(type==='mastered')m.push(id);else r.push(id);
+ state.teacherMastered=m;state.teacherReview=r;state.weak=r.slice();save();teacherWords();
+}
+function teacherAssessment(){
+ if(!teacherGuard())return;
+ var types=state.teacherAssessmentTypes||[];
+ if(!types.length){alert('اختر طريقة تقييم واحدة على الأقل');return;}
+ var cards=[];
+ if(types.includes('oral'))cards.push(['💬','شفهي','اختر كلمة من الدرس واطلب من ريم أن تقول معناها أو تستخدمها في كلامها.']);
+ if(types.includes('meaning'))cards.push(['🧠','المعاني','أنت اختر الكلمة واسألها عن معناها، ثم سجّل حكمك من صفحة الكلمات.']);
+ if(types.includes('pronunciation'))cards.push(['🎙️','النطق','شغّل الكلمة أو قلها أنت، ثم خلي ريم تكررها.']);
+ if(types.includes('sentence'))cards.push(['🧩','الجمل','اطلب منها تكوين جملة باستخدام: I + verb.']);
+ if(types.includes('listening'))cards.push(['🎧','الاستماع','شغّل كلمة بدون عرض معناها واسأل ريم ماذا سمعت.']);
+ shell('<div class="lesson-shell">'+topbar('teacherDashboard()')+'<section class="teacher-panel glass"><span class="kicker">اختبار عبدالعزيز</span><h1>أنت تقود الاختبار 👨‍🏫</h1><p style="color:var(--muted)">الموقع يعطيك الأدوات فقط، ولا يحسب نجاح أو رسوب.</p><div class="teacher-assessment">'+cards.map(function(x){return '<div><b>'+x[0]+' '+x[1]+'</b><p>'+x[2]+'</p></div>';}).join('')+'</div><div class="audio-actions"><button class="secondary" onclick="speakWord(\'water\',false)">🔊 water</button><button class="secondary" onclick="speakWord(\'shower\',false)">🔊 shower</button><button class="secondary" onclick="speakWord(\'breakfast\',false)">🔊 breakfast</button></div><button class="primary full" style="margin-top:16px" onclick="teacherWords()">سجّل تقييم الكلمات ←</button></section></div>');
+}
+function approveLesson(){
+ if(!teacherGuard())return;
+ state.assessmentStatus='approved';state.lessonDone=true;state.step=8;state.worldProgress=Math.max(state.worldProgress,25);state.xp=Math.max(state.xp,170);save();
+ shell('<div class="lesson-shell">'+topbar('teacherDashboard()')+'<section class="reward-card glass"><div class="reward-star">✓</div><h1>تم اعتماد My Morning</h1><p style="color:var(--muted)">اعتمادك أنت هو الذي يحدد اجتياز الدرس. لا توجد نسبة نجاح آلية.</p><button class="primary full" onclick="teacherDashboard()">رجوع لملف المدرّس</button></section></div>');
+}
+function teacherLogout(){sessionStorage.removeItem('reemTeacher');home();}
+
 function review(){
  var rows=state.weak.length?state.weak.map(function(id){var w=byId(id);return '<div class="review-item"><div class="review-thumb">'+art(w.kind)+'</div><div><b dir="ltr">'+w.en+'</b><small>'+w.ar+(state.arabicPhonetic?' • '+w.ph:'')+'</small></div><button class="icon-btn" onclick="speakWord(\''+w.en+'\',false)">🔊</button></div>';}).join(''):'<div class="notice">✨ ممتاز! ما عندك نقاط ضعف حالية.</div>';
  shell(topbar()+'<section class="page-head glass"><span class="kicker">Smart Review</span><h1>المراجعة الذكية 🧠</h1><p>نرجع فقط للكلمات والنقاط اللي تحتاج تثبيت.</p></section><section class="review-card glass"><h2>تحتاج تثبيت 🤍</h2><div class="review-list">'+rows+'</div><h2 style="margin-top:24px">مراجعة يومية</h2><div class="notice">لاحقًا: 3 كلمات من أمس + كلمتان من الأسبوع الماضي بنظام التكرار المتباعد.</div></section>','review');
