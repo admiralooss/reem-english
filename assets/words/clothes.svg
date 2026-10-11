@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 650" role="img">
+<defs>
+ <linearGradient id="bg7" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#241a4a"/><stop offset=".55" stop-color="#443065"/><stop offset="1" stop-color="#f0929f"/></linearGradient>
+ <linearGradient id="warm7" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffd6b0"/><stop offset="1" stop-color="#ff8d9d"/></linearGradient>
+ <filter id="sh7"><feDropShadow dx="0" dy="18" stdDeviation="16" flood-opacity=".25"/></filter>
+</defs>
+<rect width="900" height="650" rx="54" fill="url(#bg7)"/>
+<circle cx="735" cy="115" r="145" fill="#ffcc9c" opacity=".18"/>
+<circle cx="145" cy="535" r="185" fill="#8d6cff" opacity=".12"/>
+<g filter="url(#sh7)">
+<path d="M450 125v70" stroke="#e5dcec" stroke-width="20" stroke-linecap="round"/><path d="M450 190l-190 135M450 190l190 135" stroke="#e5dcec" stroke-width="18" stroke-linecap="round"/>
+<path d="M285 310l105-58 60 45 60-45 105 58-55 100-65-35v170H365V375l-65 35z" fill="#ff8eaa"/>
+<path d="M405 285l45 55 45-55" fill="#fff1f5"/>
+<path d="M640 280h90v230H620z" fill="#6f5ad5"/><path d="M620 510h125" stroke="#43345f" stroke-width="18" stroke-linecap="round"/>
+</g>
+</svg>
