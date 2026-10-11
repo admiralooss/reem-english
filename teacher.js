@@ -1,72 +1,75 @@
 const TA=document.getElementById("teacherApp");
-const PIN="7780";
-const WORDS=[
- {id:"bed",en:"bed",ar:"سرير"},{id:"water",en:"water",ar:"ماء"},{id:"shower",en:"shower",ar:"دش"},
- {id:"wash",en:"wash",ar:"يغسل"},{id:"breakfast",en:"breakfast",ar:"فطور"},{id:"wake",en:"wake up",ar:"يستيقظ"}
-];
+const PIN=(window.REEM_CONFIG&&window.REEM_CONFIG.teacherPin)||"7780";
 let page="dashboard";
-let draft={title:"اختبار My Morning",lesson:"My Morning",questions:[]};
-let qDraft={type:"oral",prompt:"",answer:"",points:10,options:[],audio:""};
-function student(){return Object.assign({xp:0,streak:0,worldProgress:0,lessonStep:1,readyForTeacher:false,weak:[],saved:[]},JSON.parse(localStorage.getItem("reemStudentV5")||"{}"))}
-function tests(){return JSON.parse(localStorage.getItem("reemTeacherTests")||"[]")}
-function saveTests(v){localStorage.setItem("reemTeacherTests",JSON.stringify(v))}
-function results(){return JSON.parse(localStorage.getItem("reemTestResults")||"[]")}
-function saveResults(v){localStorage.setItem("reemTestResults",JSON.stringify(v))}
-function statuses(){return JSON.parse(localStorage.getItem("reemTeacherWordStatus")||"{}")}
-function saveStatuses(v){localStorage.setItem("reemTeacherWordStatus",JSON.stringify(v))}
-function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
-function logged(){return sessionStorage.getItem("reemTeacherAuth")==="1"}
+let editingWordId=null;
+
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
+function logged(){return sessionStorage.getItem("reemTeacherPhase1")==="1";}
+function profile(){return ReemStore.getProfile();}
+function content(){return ReemStore.getContent();}
+function currentLevel(p=profile()){
+  const list=(window.REEM_CONFIG.levels||[]).slice().sort((a,b)=>a.minPoints-b.minPoints);
+  let out=list[0]||{id:"starter",nameAr:"البداية",nameEn:"Starter"};
+  list.forEach(l=>{if((p.points||0)>=l.minPoints)out=l});
+  return out;
+}
+function courseProgress(p=profile()){
+  const words=content().words||[];return words.length?Math.round((p.learnedWordIds.length/words.length)*100):0;
+}
 function login(){
- TA.innerHTML='<div class="login-wrap"><section class="login-card"><div class="login-lock">🔐</div><h1>ملف عبدالعزيز</h1><p>هذا القسم خاص بالمدرّس: متابعة ريم، بناء الاختبارات، إرسالها، ومراجعة النتائج.</p><input id="pin" class="pin" type="password" inputmode="numeric" maxlength="4" placeholder="••••" onkeydown="if(event.key===\'Enter\')checkPin()"><div id="err"></div><button class="primary full" onclick="checkPin()">دخول</button><button class="ghost full" style="margin-top:8px" onclick="location.href=\'./\'">رجوع لموقع ريم</button></section></div>';
- setTimeout(()=>document.getElementById("pin")?.focus(),100);
+  TA.innerHTML='<div class="login-wrap"><section class="login-card"><div class="login-icon">🔐</div><h1>ملف المعلم</h1><p>هذا القسم خاص بك: بيانات الطالب، التقدم، الكلمات، الفئات، وإعادة البدء من الصفر.</p><input id="pin" class="pin" maxlength="4" inputmode="numeric" type="password" placeholder="••••" onkeydown="if(event.key===\'Enter\')checkPin()"><div id="err"></div><button class="primary full" onclick="checkPin()">دخول</button><button class="ghost full" style="margin-top:8px" onclick="location.href=\'./\'">واجهة الطالب</button></section></div>';
+  setTimeout(()=>document.getElementById("pin")?.focus(),100);
 }
-function checkPin(){const v=document.getElementById("pin")?.value||"";if(v===PIN){sessionStorage.setItem("reemTeacherAuth","1");render()}else document.getElementById("err").innerHTML='<div class="error">الرقم السري غير صحيح</div>'}
-function logout(){sessionStorage.removeItem("reemTeacherAuth");login()}
-function side(){
- const nav=[["dashboard","📊","الرئيسية"],["progress","📚","تقدم ريم"],["builder","🧩","صانع الاختبار"],["tests","📝","اختباراتي"],["results","✅","النتائج"]];
- return '<aside id="sidebar" class="sidebar"><div class="logo"><strong>Reem English</strong><small>Abdulaziz Teacher</small></div><div class="teacher-badge"><b>👨‍🏫 عبدالعزيز</b><small>صلاحية المدرّس الكاملة</small></div><nav class="side-nav">'+nav.map(n=>'<button class="'+(page===n[0]?"active":"")+'" onclick="go(\''+n[0]+'\')"><b>'+n[1]+'</b><span>'+n[2]+'</span></button>').join("")+'</nav><div class="side-bottom"><button class="ghost full" onclick="location.href=\'./\'">واجهة ريم</button><button class="danger full" style="margin-top:7px" onclick="logout()">تسجيل الخروج</button></div></aside>'
+function checkPin(){const v=document.getElementById("pin")?.value||"";if(v===PIN){sessionStorage.setItem("reemTeacherPhase1","1");render()}else document.getElementById("err").innerHTML='<div class="error">الرقم السري غير صحيح</div>'}
+function logout(){sessionStorage.removeItem("reemTeacherPhase1");login();}
+function nav(){
+  const items=[["dashboard","📊","الرئيسية"],["profile","👤","ملف الطالب"],["content","📚","الكلمات والفئات"],["tests","📝","الاختبارات"]];
+  return '<aside id="side" class="sidebar"><div class="brand"><strong>Reem English</strong><small>Teacher Control</small></div><div class="teacher-card"><b>👨‍🏫 المعلم</b><small>تحكم كامل بطالب واحد</small></div><nav class="nav">'+items.map(x=>'<button class="'+(page===x[0]?"active":"")+'" onclick="go(\''+x[0]+'\')"><b>'+x[1]+'</b><span>'+x[2]+'</span></button>').join("")+'</nav><div class="side-bottom"><button class="ghost full" onclick="location.href=\'./\'">فتح واجهة الطالب</button><button class="danger full" style="margin-top:7px" onclick="logout()">تسجيل الخروج</button></div></aside>';
 }
-function portal(content,title,sub){
- TA.innerHTML='<div class="portal">'+side()+'<main class="main"><header class="top"><div style="display:flex;align-items:center;gap:10px"><button class="mobile-menu" onclick="document.getElementById(\'sidebar\').classList.toggle(\'open\')">☰</button><div><h1>'+esc(title)+'</h1><p>'+esc(sub||"")+'</p></div></div><div class="top-actions"><button class="ghost" onclick="location.href=\'./\'">فتح واجهة ريم</button></div></header>'+content+'</main></div>'
+function shell(body,title,sub){
+  TA.innerHTML='<div class="portal">'+nav()+'<main class="main"><header class="top"><div style="display:flex;align-items:center;gap:9px"><button class="mobile-menu" onclick="document.getElementById(\'side\').classList.toggle(\'open\')">☰</button><div><h1>'+esc(title)+'</h1><p>'+esc(sub||"")+'</p></div></div><button class="ghost" onclick="location.href=\'./\'">واجهة الطالب</button></header>'+body+'</main></div>';
 }
-function go(p){page=p;render()}
-function render(){if(!logged())return login();if(page==="dashboard")dashboard();else if(page==="progress")progress();else if(page==="builder")builder();else if(page==="tests")savedTests();else if(page==="results")resultsPage()}
+function go(p){page=p;render();}
+function render(){if(!logged())return login();if(page==="dashboard")dashboard();else if(page==="profile")profilePage();else if(page==="content")contentPage();else testsPage();}
 function dashboard(){
- const s=student(),ts=tests(),rs=results(),st=statuses();
- const good=Object.values(st).filter(x=>x==="mastered").length,rev=Object.values(st).filter(x=>x==="review").length;
- let assigned=localStorage.getItem("reemAssignedTest");
- portal('<section class="grid4"><div class="card metric"><div class="icon">🌱</div><b>'+s.worldProgress+'%</b><span>تقدم My Day</span></div><div class="card metric"><div class="icon">⭐</div><b>'+s.xp+'</b><span>XP</span></div><div class="card metric"><div class="icon">✅</div><b>'+good+'</b><span>كلمات متقنة</span></div><div class="card metric"><div class="icon">↻</div><b>'+rev+'</b><span>تحتاج مراجعة</span></div></section><section class="content-grid"><div class="card"><div class="section-title"><h2>الدرس الحالي</h2><span class="status-pill">'+(s.readyForTeacher?"جاهز لتقييمك":"ريم ما زالت تتعلم")+'</span></div><div class="lesson-status"><small>WORLD 1</small><h3>My Morning ☀️</h3><p>الخطوة '+s.lessonStep+' من 7</p><div class="progress-line" style="margin-top:10px"><i style="width:'+Math.min(100,s.lessonStep/7*100)+'%"></i></div></div><div style="display:flex;gap:7px;margin-top:10px"><button class="primary" onclick="go(\'progress\')">تقييم الكلمات</button><button class="ghost" onclick="go(\'builder\')">أنشئ اختبارًا</button></div></div><div class="card"><div class="section-title"><h2>الاختبارات</h2><small>'+ts.length+' محفوظ</small></div><div class="lesson-status"><h3>'+(assigned?"يوجد اختبار مُرسل لريم":"لا يوجد اختبار مُرسل الآن")+'</h3><p>'+rs.filter(r=>r.status==="awaiting_teacher").length+' نتيجة بانتظار مراجعتك</p></div><button class="ghost full" style="margin-top:10px" onclick="go(\'results\')">فتح النتائج</button></div></section>',"لوحة عبدالعزيز","أنت المسؤول عن التقييم والاختبارات، وليس الموقع.")
+  const p=profile(),c=content(),prog=courseProgress(p),lvl=currentLevel(p);
+  shell('<section class="grid4"><div class="card metric"><div class="ico">⭐</div><b>'+p.points+'</b><span>النقاط</span></div><div class="card metric"><div class="ico">📚</div><b>'+p.learnedWordIds.length+'/'+c.words.length+'</b><span>كلمات محفوظة</span></div><div class="card metric"><div class="ico">📝</div><b>'+p.completedTests+'</b><span>اختبارات منجزة</span></div><div class="card metric"><div class="ico">📊</div><b>'+prog+'%</b><span>التقدم</span></div></section><section class="two"><div class="card"><div class="section-head"><h2>الطالب الحالي</h2><small>'+esc(lvl.nameEn)+'</small></div><div class="status"><h3>'+esc(p.name)+'</h3><p>العمر: '+(p.age??"غير محدد")+' • المستوى: '+esc(lvl.nameAr)+'</p><div class="progress"><i style="width:'+prog+'%"></i></div><p style="margin-top:8px">المتبقي: '+(100-prog)+'%</p></div><div class="actions" style="margin-top:10px"><button class="primary" onclick="go(\'profile\')">تعديل الملف</button><button class="ghost" onclick="go(\'content\')">إدارة الكلمات</button></div></div><div class="card"><div class="section-head"><h2>المرحلة الأولى</h2><small>10 كلمات يوميًا</small></div><div class="status"><h3>عائلة الصباح ☀️</h3><p>الكلمات الحالية: '+c.words.filter(w=>w.categoryId==="morning").length+' كلمات</p><div class="progress"><i style="width:'+Math.min(100,c.words.filter(w=>w.categoryId==="morning").length*10)+'%"></i></div></div><div class="notice" style="margin-top:10px">الاختبارات الكاملة ستكون المرحلة الثانية. الآن نثبت الكلمات، الملف، التقدم، والفئات.</div></div></section>',"لوحة المعلم","طالب واحد فقط، وكل الصلاحيات عندك.");
 }
-function progress(){
- const s=student(),st=statuses();
- const rows=WORDS.map(w=>'<div class="word"><div><b dir="ltr">'+esc(w.en)+'</b><small>'+esc(w.ar)+'</small></div><button class="'+(st[w.id]==="mastered"?"on-good":"")+'" onclick="markWord(\''+w.id+'\',\'mastered\')">✓ أتقنت</button><button class="'+(st[w.id]==="review"?"on-review":"")+'" onclick="markWord(\''+w.id+'\',\'review\')">↻ مراجعة</button></div>').join("");
- portal('<section class="content-grid"><div class="card"><div class="section-title"><h2>كلمات My Morning</h2><small>حكمك أنت</small></div><div class="words">'+rows+'</div></div><div class="card"><div class="section-title"><h2>حالة الدرس</h2></div><div class="lesson-status"><span class="status-pill">'+(s.readyForTeacher?"جاهز للتقييم":"قيد التعلّم")+'</span><h3>My Morning</h3><p>الخطوة '+s.lessonStep+' / 7</p><p style="margin-top:6px">الكلمات التي اختار الموقع لمراجعتها: '+(s.weak?.join("، ")||"—")+'</p></div><button class="primary full" style="margin-top:12px" onclick="go(\'builder\')">صمّم اختبارك الآن</button></div></section>',"تقدم ريم","تابع الدرس والكلمات وحدد ما أتقنته وما يحتاج مراجعة.")
+function profilePage(){
+  const p=profile();
+  shell('<section class="two"><div class="card"><div class="section-head"><h2>بيانات الطالب</h2><small>طالب واحد فقط</small></div><div class="form"><div class="field"><label>الاسم</label><input id="sName" value="'+esc(p.name)+'"></div><div class="field"><label>العمر</label><input id="sAge" type="number" min="1" max="120" value="'+esc(p.age??"")+'"></div><div class="field"><label>المستوى الحالي</label><select id="sLevel">'+(window.REEM_CONFIG.levels||[]).map(l=>'<option value="'+esc(l.id)+'" '+(p.currentLevelId===l.id?"selected":"")+'>'+esc(l.nameAr)+' — '+esc(l.nameEn)+'</option>').join("")+'</select></div><button class="primary" onclick="saveStudent()">حفظ البيانات</button></div></div><div class="card"><div class="section-head"><h2>إعادة البدء</h2><small>صلاحية المعلم</small></div><div class="notice">يمسح تقدم الطالب ونقاطه وعدد الاختبارات، ويعيد اليوم إلى اليوم الأول. الاسم والعمر يبقون كما هم.</div><button class="danger full" style="margin-top:12px" onclick="resetStudent()">إعادة البدء من الصفر</button></div></section>',"ملف الطالب","عدّل بيانات الطالب أو صفّر تقدمه.");
 }
-function markWord(id,status){const st=statuses();st[id]=status;saveStatuses(st);progress()}
-const TYPE_LABEL={oral:"شفهي",meaning:"معنى/ترجمة",pronunciation:"نطق",listening:"استماع",written:"كتابي",sentence:"تكوين جملة",order:"ترتيب",mcq:"اختيارات"};
-function builder(){
- const total=draft.questions.reduce((a,q)=>a+(Number(q.points)||0),0);
- const qlist=draft.questions.length?draft.questions.map((q,i)=>'<div class="question"><div class="question-head"><b>'+(i+1)+'. '+TYPE_LABEL[q.type]+'</b><span>'+q.points+' درجات</span></div><p>'+esc(q.prompt)+'</p><div class="question-actions"><button onclick="moveQ('+i+',-1)">↑</button><button onclick="moveQ('+i+',1)">↓</button><button onclick="removeQ('+i+')">حذف</button></div></div>').join(""):'<div class="empty">أضف أول سؤال من اللوحة.</div>';
- portal('<div class="builder"><section class="card"><div class="section-title"><h2>إعداد الاختبار</h2><small>'+total+' درجة</small></div><div class="field"><label>اسم الاختبار</label><input id="testTitle" value="'+esc(draft.title)+'" oninput="draft.title=this.value"></div><div class="field"><label>الدرس</label><select id="lessonSel" onchange="draft.lesson=this.value"><option>My Morning</option></select></div><div class="section-title" style="margin-top:16px"><h2>سؤال جديد</h2><small>اختر النوع</small></div><div class="q-type-grid">'+Object.keys(TYPE_LABEL).map(k=>'<button class="'+(qDraft.type===k?"active":"")+'" onclick="setQType(\''+k+'\')">'+TYPE_LABEL[k]+'</button>').join("")+'</div><div class="field" style="margin-top:10px"><label>السؤال / التعليمات</label><textarea id="qPrompt" oninput="qDraft.prompt=this.value">'+esc(qDraft.prompt)+'</textarea></div><div class="field"><label>الإجابة المتوقعة أو ملاحظة التصحيح</label><input id="qAnswer" value="'+esc(qDraft.answer)+'" oninput="qDraft.answer=this.value"></div>'+(qDraft.type==="mcq"?'<div class="field"><label>الخيارات — افصل بينها بعلامة |</label><input id="qOptions" value="'+esc((qDraft.options||[]).join(" | "))+'" oninput="qDraft.options=this.value.split(\'|\').map(x=>x.trim()).filter(Boolean)"></div>':"")+(qDraft.type==="listening"?'<div class="field"><label>النص الذي سيُقرأ بالصوت</label><input id="qAudio" value="'+esc(qDraft.audio)+'" oninput="qDraft.audio=this.value"></div>':"")+'<div class="field"><label>الدرجة</label><input id="qPoints" type="number" min="1" value="'+qDraft.points+'" oninput="qDraft.points=Number(this.value)||1"></div><button class="primary full" onclick="addQuestion()">+ أضف السؤال</button></section><section class="card"><div class="section-title"><h2>أسئلة الاختبار</h2><small>'+draft.questions.length+' سؤال</small></div><div class="question-list">'+qlist+'</div><div style="display:flex;gap:7px;margin-top:12px"><button class="primary" onclick="saveDraft()">حفظ الاختبار</button><button class="ghost" onclick="clearDraft()">اختبار جديد</button></div></section></div>',"صانع الاختبار","صمّم الاختبار من الصفر بالطريقة التي تريدها.")
+function saveStudent(){
+  const p=profile();p.name=document.getElementById("sName").value.trim()||p.name;p.age=Number(document.getElementById("sAge").value)||null;p.currentLevelId=document.getElementById("sLevel").value;ReemStore.saveProfile(p);alert("تم حفظ بيانات الطالب");dashboard();page="dashboard";
 }
-function setQType(t){qDraft.type=t;builder()}
-function addQuestion(){if(!String(qDraft.prompt||"").trim())return alert("اكتب السؤال أولًا");draft.questions.push(JSON.parse(JSON.stringify(qDraft)));qDraft={type:"oral",prompt:"",answer:"",points:10,options:[],audio:""};builder()}
-function removeQ(i){draft.questions.splice(i,1);builder()}
-function moveQ(i,d){const n=i+d;if(n<0||n>=draft.questions.length)return;const x=draft.questions.splice(i,1)[0];draft.questions.splice(n,0,x);builder()}
-function clearDraft(){draft={title:"اختبار My Morning",lesson:"My Morning",questions:[]};qDraft={type:"oral",prompt:"",answer:"",points:10,options:[],audio:""};builder()}
-function saveDraft(){if(!draft.questions.length)return alert("أضف سؤالًا واحدًا على الأقل");const all=tests();const t={id:Date.now(),title:draft.title||"اختبار",lesson:draft.lesson||"My Morning",questions:JSON.parse(JSON.stringify(draft.questions)),createdAt:new Date().toISOString()};all.push(t);saveTests(all);draft={title:"اختبار My Morning",lesson:"My Morning",questions:[]};alert("تم حفظ الاختبار");page="tests";render()}
-function savedTests(){
- const all=tests();
- const rows=all.length?all.slice().reverse().map(t=>'<div class="test-card"><div><h3>'+esc(t.title)+'</h3><p>'+esc(t.lesson)+' • '+t.questions.length+' أسئلة • '+t.questions.reduce((a,q)=>a+(Number(q.points)||0),0)+' درجة</p></div><div class="test-actions"><button class="primary" onclick="assignTest('+t.id+')">إرسال لريم</button><button class="ghost" onclick="duplicateTest('+t.id+')">نسخ</button><button class="danger" onclick="deleteTest('+t.id+')">حذف</button></div></div>').join(""):'<div class="empty">ما عندك اختبارات محفوظة حتى الآن.</div>';
- portal('<section class="card"><div class="section-title"><h2>اختباراتي</h2><button class="primary" onclick="go(\'builder\')">+ اختبار جديد</button></div>'+rows+'</section>',"اختباراتي","احفظ أكثر من اختبار وأرسل أي واحد لريم وقت ما تريد.")
+function resetStudent(){if(!confirm("متأكد؟ سيتم مسح تقدم الطالب ونقاطه والبدء من الصفر."))return;ReemStore.resetProgress();alert("تمت إعادة الطالب من الصفر");dashboard();page="dashboard";}
+function contentPage(){
+  const c=content();const cats=c.categories||[],words=c.words||[];
+  shell('<div class="content-layout"><section class="card"><div class="section-head"><h2>الفئات</h2><small>'+cats.length+'</small></div><div class="list">'+cats.map(cat=>'<div class="row"><div><b>'+esc(cat.icon||"📁")+' '+esc(cat.nameAr)+'</b><small>'+esc(cat.nameEn)+' • '+words.filter(w=>w.categoryId===cat.id).length+' كلمة</small></div><button onclick="editCategory(\''+esc(cat.id)+'\')">تعديل</button><button onclick="deleteCategory(\''+esc(cat.id)+'\')">حذف</button></div>').join("")+'</div><div class="form" style="margin-top:14px"><div class="field"><label>فئة جديدة — الاسم العربي</label><input id="catAr" placeholder="مثال: عائلة السفر"></div><div class="field"><label>الاسم الإنجليزي</label><input id="catEn" placeholder="Travel"></div><div class="field"><label>أيقونة</label><input id="catIcon" placeholder="✈️"></div><button class="primary" onclick="addCategory()">+ إضافة فئة</button></div></section><section class="card"><div class="section-head"><h2>الكلمات</h2><small>'+words.length+' كلمة</small></div><div class="form"><div class="field"><label>الفئة</label><select id="wCat">'+cats.map(cat=>'<option value="'+esc(cat.id)+'">'+esc(cat.nameAr)+'</option>').join("")+'</select></div><div class="field"><label>الكلمة الإنجليزية</label><input id="wEn" placeholder="example"></div><div class="field"><label>المعنى بالعربي</label><input id="wAr" placeholder="المعنى"></div><div class="field"><label>النطق المبسط</label><input id="wPron" placeholder="إكزامبل"></div><div class="field"><label>مثال إنجليزي</label><input id="wExEn" placeholder="This is an example."></div><div class="field"><label>ترجمة المثال</label><input id="wExAr" placeholder="هذا مثال."></div><div class="field"><label>رابط الصورة</label><input id="wImg" placeholder="https://..."></div><button class="primary" onclick="saveWordForm()">+ إضافة الكلمة</button></div><div class="list" style="margin-top:14px">'+words.map(w=>'<div class="word-row"><img class="word-img" src="'+esc(w.image)+'" alt=""><div><b dir="ltr">'+esc(w.en)+'</b><small>'+esc(w.ar)+' • '+esc(w.pronunciation)+'</small></div><button onclick="loadWord(\''+esc(w.id)+'\')">تعديل</button><button onclick="deleteWord(\''+esc(w.id)+'\')">حذف</button></div>').join("")+'</div></section></div>',"الكلمات والفئات","أضف وعدّل محتوى المرحلة الأولى بنفسك.");
 }
-function assignTest(id){localStorage.setItem("reemAssignedTest",String(id));alert("تم إرسال الاختبار لواجهة ريم");savedTests()}
-function deleteTest(id){if(!confirm("حذف الاختبار؟"))return;saveTests(tests().filter(t=>t.id!==id));savedTests()}
-function duplicateTest(id){const t=tests().find(x=>x.id===id);if(!t)return;draft={title:t.title+" - نسخة",lesson:t.lesson,questions:JSON.parse(JSON.stringify(t.questions))};page="builder";render()}
-function resultsPage(){
- const rs=results(),ts=tests();
- const rows=rs.length?rs.slice().reverse().map(r=>{const t=ts.find(x=>x.id===r.testId);return '<div class="result-card"><h3>'+esc(t?.title||"اختبار")+'</h3><p>'+new Date(r.submittedAt).toLocaleString("ar-SA")+' • '+(r.status==="graded"?"تم التصحيح":"بانتظار تقييمك")+'</p><div>'+r.answers.map((a,i)=>'<div class="answer"><b>س'+(i+1)+':</b> '+esc(a.a)+'</div>').join("")+'</div><div class="score-row"><input id="score'+r.id+'" type="number" min="0" placeholder="الدرجة" value="'+esc(r.teacherScore||"")+'"><input id="note'+r.id+'" placeholder="ملاحظة لعبدالعزيز" value="'+esc(r.teacherNote||"")+'"></div><button class="primary" style="margin-top:8px" onclick="gradeResult('+r.id+')">حفظ التقييم</button></div>'}).join(""):'<div class="empty">لا توجد إجابات مرسلة من ريم حتى الآن.</div>';
- portal('<section class="card"><div class="section-title"><h2>نتائج ريم</h2><small>التصحيح يدوي بقرارك</small></div>'+rows+'</section>',"النتائج","راجع الإجابات وسجل الدرجة والملاحظات بنفسك.")
+function addCategory(){
+  const ar=document.getElementById("catAr").value.trim(),en=document.getElementById("catEn").value.trim(),icon=document.getElementById("catIcon").value.trim()||"📁";if(!ar||!en)return alert("اكتب الاسم العربي والإنجليزي");
+  const c=content(),id="cat-"+Date.now();c.categories.push({id,nameAr:ar,nameEn:en,icon,order:c.categories.length+1});ReemStore.saveContent(c);contentPage();
 }
-function gradeResult(id){const rs=results(),r=rs.find(x=>x.id===id);if(!r)return;r.teacherScore=document.getElementById("score"+id)?.value||"";r.teacherNote=document.getElementById("note"+id)?.value||"";r.status="graded";r.gradedAt=new Date().toISOString();saveResults(rs);resultsPage()}
+function editCategory(id){
+  const c=content(),cat=c.categories.find(x=>x.id===id);if(!cat)return;const ar=prompt("الاسم العربي",cat.nameAr);if(ar===null)return;const en=prompt("الاسم الإنجليزي",cat.nameEn);if(en===null)return;const icon=prompt("الأيقونة",cat.icon||"📁");cat.nameAr=ar.trim()||cat.nameAr;cat.nameEn=en.trim()||cat.nameEn;cat.icon=icon.trim()||cat.icon;ReemStore.saveContent(c);contentPage();
+}
+function deleteCategory(id){
+  const c=content();if(c.words.some(w=>w.categoryId===id))return alert("انقل أو احذف كلمات هذه الفئة أولًا.");if(!confirm("حذف الفئة؟"))return;c.categories=c.categories.filter(x=>x.id!==id);ReemStore.saveContent(c);contentPage();
+}
+function loadWord(id){
+  const c=content(),w=c.words.find(x=>x.id===id);if(!w)return;editingWordId=id;
+  document.getElementById("wCat").value=w.categoryId;document.getElementById("wEn").value=w.en;document.getElementById("wAr").value=w.ar;document.getElementById("wPron").value=w.pronunciation;document.getElementById("wExEn").value=w.exampleEn;document.getElementById("wExAr").value=w.exampleAr;document.getElementById("wImg").value=w.image;window.scrollTo({top:0,behavior:"smooth"});
+}
+function saveWordForm(){
+  const c=content(),obj={categoryId:document.getElementById("wCat").value,en:document.getElementById("wEn").value.trim(),ar:document.getElementById("wAr").value.trim(),pronunciation:document.getElementById("wPron").value.trim(),exampleEn:document.getElementById("wExEn").value.trim(),exampleAr:document.getElementById("wExAr").value.trim(),image:document.getElementById("wImg").value.trim()};
+  if(!obj.en||!obj.ar||!obj.image)return alert("الكلمة، المعنى، والصورة مطلوبة");
+  if(editingWordId){const w=c.words.find(x=>x.id===editingWordId);Object.assign(w,obj);editingWordId=null;}else{obj.id="word-"+Date.now();c.words.push(obj);}
+  ReemStore.saveContent(c);contentPage();
+}
+function deleteWord(id){if(!confirm("حذف الكلمة؟"))return;const c=content();c.words=c.words.filter(x=>x.id!==id);ReemStore.saveContent(c);const p=profile();p.learnedWordIds=p.learnedWordIds.filter(x=>x!==id);p.reviewWordIds=p.reviewWordIds.filter(x=>x!==id);ReemStore.saveProfile(p);contentPage();}
+function testsPage(){
+  const p=profile();
+  shell('<section class="two"><div class="card"><div class="section-head"><h2>الاختبارات</h2><small>المرحلة الثانية</small></div><div class="notice">سيكون عندك صانع اختبار كامل: اختيار من متعدد، كتابة، مطابقة، صح/خطأ، تحديد عدد الأسئلة والدرجات، ثم إرسال الاختبار للطالب وتصحيحه.</div></div><div class="card"><div class="section-head"><h2>الحالة الحالية</h2></div><div class="status"><h3>'+p.completedTests+' اختبارات منجزة</h3><p>لم نفعّل صانع الاختبارات في المرحلة الأولى حتى نثبت الكلمات والملف والواجهة أولًا.</p></div></div></section>',"الاختبارات","محجوزة للمرحلة الثانية بعد اعتماد المرحلة الأولى.");
+}
 render();
