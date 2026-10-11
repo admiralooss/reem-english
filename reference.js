@@ -113,8 +113,85 @@ function account(){
 }
 function togglePhonetic(){state.arabicPhonetic=!state.arabicPhonetic;save();account();}
 function toggleAccent(){state.accent=state.accent==="en-US"?"en-GB":"en-US";save();account();}
-function speak(text,rate=.9){if(!("speechSynthesis" in window))return;window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=state.accent;u.rate=rate;u.pitch=1;const voices=speechSynthesis.getVoices();const voice=voices.find(v=>v.lang===state.accent)||voices.find(v=>v.lang?.startsWith("en"));if(voice)u.voice=voice;speechSynthesis.speak(u);}
-async function recordSelf(target){const box=document.getElementById("recordBox");if(!navigator.mediaDevices||!window.MediaRecorder){if(box)box.textContent="التسجيل غير مدعوم في هذا المتصفح.";return;}try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});chunks=[];recorder=new MediaRecorder(stream);recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};recorder.onstop=()=>{const url=URL.createObjectURL(new Blob(chunks,{type:recorder.mimeType}));if(box)box.innerHTML='<audio controls style="width:100%;margin-top:8px" src="'+url+'"></audio><button class="record-btn" onclick="speak(\''+esc(target)+'\',.8)">🔊 اسمعي النموذج</button>';stream.getTracks().forEach(t=>t.stop())};recorder.start();if(box)box.textContent="🎙️ التسجيل الآن...";setTimeout(()=>{if(recorder?.state==="recording")recorder.stop()},4500)}catch(e){if(box)box.textContent="اسمحي للميكروفون من إعدادات المتصفح."}}
+let __reemAudio=null;
+let __reemUtterance=null;
+const __localAudio={
+  "bed":"./audio/bed.mp3",
+  "water":"./audio/water.mp3",
+  "shower":"./audio/shower.mp3"
+};
+function normalizeAudioKey(text){return String(text||"").trim().toLowerCase().replace(/[.!?]/g,"");}
+function speak(text,rate=.9){
+  const key=normalizeAudioKey(text);
+  try{
+    if(__reemAudio){__reemAudio.pause();__reemAudio.currentTime=0;}
+    if(window.speechSynthesis&&speechSynthesis.speaking)speechSynthesis.cancel();
+  }catch(e){}
+  if(__localAudio[key]){
+    const a=new Audio(__localAudio[key]+"?v=audio-2");
+    __reemAudio=a;
+    a.preload="auto";
+    a.playbackRate=rate<=.7?.68:1;
+    a.defaultPlaybackRate=a.playbackRate;
+    a.volume=1;
+    const p=a.play();
+    if(p&&p.catch)p.catch(()=>speakNative(text,rate));
+    return;
+  }
+  speakNative(text,rate);
+}
+function speakNative(text,rate=.9){
+  if(!("speechSynthesis" in window)){showAudioMessage("الصوت غير مدعوم في هذا المتصفح.");return;}
+  try{
+    if(speechSynthesis.paused)speechSynthesis.resume();
+    const u=new SpeechSynthesisUtterance(String(text));
+    __reemUtterance=u;
+    u.lang=state.accent||"en-US";
+    u.rate=rate<=.7?.62:.92;
+    u.pitch=1;
+    u.volume=1;
+    const voices=speechSynthesis.getVoices()||[];
+    const exact=voices.find(v=>v.lang===u.lang);
+    const english=voices.find(v=>String(v.lang||"").toLowerCase().startsWith("en"));
+    if(exact||english)u.voice=exact||english;
+    u.onerror=()=>showAudioMessage("تعذر تشغيل الصوت. اضغط الزر مرة ثانية.");
+    speechSynthesis.speak(u);
+  }catch(e){showAudioMessage("تعذر تشغيل الصوت. جرّب الضغط مرة ثانية.");}
+}
+function showAudioMessage(msg){
+  let box=document.getElementById("audioStatus");
+  if(!box){
+    box=document.createElement("div");
+    box.id="audioStatus";
+    box.className="teacher-note";
+    const host=document.querySelector(".word-card > div:last-child")||document.querySelector(".phonics-page")||document.querySelector(".grammar-page");
+    if(host)host.appendChild(box);
+  }
+  if(box)box.textContent=msg;
+}
+async function recordSelf(target){
+  const box=document.getElementById("recordBox");
+  const MR=window.MediaRecorder||window.webkitMediaRecorder;
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||!MR){
+    if(box)box.innerHTML='🎙️ التسجيل غير متاح من وضع المتصفح الحالي.<br><small>افتحي الرابط مباشرة في Safari واسمحي للميكروفون، ثم جرّبي مرة ثانية.</small>';
+    return;
+  }
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    chunks=[];recorder=new MR(stream);
+    recorder.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
+    recorder.onstop=()=>{
+      const url=URL.createObjectURL(new Blob(chunks,{type:recorder.mimeType||"audio/webm"}));
+      if(box)box.innerHTML='<audio controls playsinline style="width:100%;margin-top:8px" src="'+url+'"></audio><button class="record-btn" onclick="speak(\''+esc(target)+'\',.8)">🔊 اسمعي النموذج</button>';
+      stream.getTracks().forEach(t=>t.stop());
+    };
+    recorder.start();
+    if(box)box.innerHTML='🎙️ التسجيل الآن...<br><small>يتوقف تلقائيًا بعد 4 ثوانٍ.</small>';
+    setTimeout(()=>{if(recorder&&recorder.state==="recording")recorder.stop()},4000);
+  }catch(e){
+    if(box)box.innerHTML='اسمحي للميكروفون من إعدادات Safari ثم حاولي مرة ثانية.';
+  }
+}
 function runAssignedTest(){
  const t=assignedTest();if(!t)return home();localStorage.setItem("reemActiveTest",String(t.id));testQuestion(t,0,[]);
 }
