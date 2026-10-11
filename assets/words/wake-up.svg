@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 650" role="img">
+<defs>
+ <linearGradient id="bg1" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#241a4a"/><stop offset=".55" stop-color="#443065"/><stop offset="1" stop-color="#f0929f"/></linearGradient>
+ <linearGradient id="warm1" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffd6b0"/><stop offset="1" stop-color="#ff8d9d"/></linearGradient>
+ <filter id="sh1"><feDropShadow dx="0" dy="18" stdDeviation="16" flood-opacity=".25"/></filter>
+</defs>
+<rect width="900" height="650" rx="54" fill="url(#bg1)"/>
+<circle cx="735" cy="115" r="145" fill="#ffcc9c" opacity=".18"/>
+<circle cx="145" cy="535" r="185" fill="#8d6cff" opacity=".12"/>
+<g filter="url(#sh1)">
+<rect x="185" y="360" width="530" height="90" rx="28" fill="#6d4562"/>
+<rect x="215" y="190" width="360" height="190" rx="44" fill="#f4cab2"/>
+<circle cx="395" cy="288" r="105" fill="#161a3e" stroke="#ffd7cf" stroke-width="18"/>
+<line x1="395" y1="288" x2="395" y2="220" stroke="#fff" stroke-width="18" stroke-linecap="round"/>
+<line x1="395" y1="288" x2="455" y2="318" stroke="#ff78a4" stroke-width="18" stroke-linecap="round"/>
+<circle cx="395" cy="288" r="13" fill="#fff"/>
+<path d="M275 185q45-68 90 0M425 185q45-68 90 0" fill="none" stroke="#ffcf93" stroke-width="24" stroke-linecap="round"/>
+<circle cx="675" cy="210" r="62" fill="#ffc65d"/><g stroke="#ffc65d" stroke-width="16" stroke-linecap="round"><path d="M675 108v-40M675 352v-40M573 210h-40M817 210h-40M603 138l-28-28M747 282l28 28M747 138l28-28M603 282l-28 28"/></g>
+</g>
+</svg>
