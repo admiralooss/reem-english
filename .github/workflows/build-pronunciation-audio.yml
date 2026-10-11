@@ -1,0 +1,64 @@
+name: Build pronunciation audio
+
+on:
+  push:
+    paths:
+      - ".github/workflows/build-pronunciation-audio.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-audio:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install neural TTS
+        run: pip install edge-tts
+      - name: Generate American female pronunciation
+        shell: bash
+        run: |
+          set -e
+          mkdir -p audio/words
+          python - <<'PY'
+          import asyncio
+          from pathlib import Path
+          import edge_tts
+
+          words = {
+              "wake-up": "wake up",
+              "bed": "bed",
+              "bathroom": "bathroom",
+              "shower": "shower",
+              "wash": "wash",
+              "toothbrush": "toothbrush",
+              "clothes": "clothes",
+              "breakfast": "breakfast",
+              "water": "water",
+              "ready": "ready",
+          }
+          VOICE = "en-US-JennyNeural"
+
+          async def make():
+              out = Path("audio/words")
+              for key, text in words.items():
+                  await edge_tts.Communicate(text, VOICE, rate="+0%").save(str(out / f"{key}.mp3"))
+                  await edge_tts.Communicate(text, VOICE, rate="-28%").save(str(out / f"{key}-slow.mp3"))
+          asyncio.run(make())
+          PY
+      - name: Commit generated audio
+        shell: bash
+        run: |
+          git config user.name "reem-english-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add audio/words
+          if git diff --cached --quiet; then
+            echo "No audio changes"
+          else
+            git commit -m "build: add American female pronunciation audio [skip ci]"
+            git push
+          fi
