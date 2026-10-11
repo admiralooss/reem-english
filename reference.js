@@ -18,6 +18,7 @@ const WORLDS=[
 ];
 const DEFAULT={xp:320,streak:12,worldProgress:17,lessonStep:1,wordIndex:0,lessonCompleted:false,readyForTeacher:false,weak:["shower"],saved:["bed"],arabicPhonetic:true,accent:"en-US"};
 let state=Object.assign({},DEFAULT,JSON.parse(localStorage.getItem("reemStudentV5")||"{}"));
+state.accent="en-US";
 let recorder=null,chunks=[],recordUrl=null,gameIndex=0;
 function save(){localStorage.setItem("reemStudentV5",JSON.stringify(state));}
 function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));}
@@ -109,54 +110,64 @@ function review(){
 }
 function account(){
  window.__back=home;
- shell(topbar("حسابي")+'<section class="review-page"><h2>إعدادات ريم</h2><div class="sentence"><div>النطق العربي المبسط</div><button class="round-btn" onclick="togglePhonetic()">'+(state.arabicPhonetic?"✓":"—")+'</button></div><div class="sentence"><div>الصوت</div><button class="round-btn" onclick="toggleAccent()">'+(state.accent==="en-US"?"🇺🇸":"🇬🇧")+'</button></div><div class="teacher-note">ملف عبدالعزيز منفصل ومحمي. زر 🔐 أعلى الصفحة يفتح ملف المدرّس.</div></section>',"account");
+ shell(topbar("حسابي")+'<section class="review-page"><h2>إعدادات ريم</h2><div class="sentence"><div><b>النطق العربي المبسط</b><small>إظهار طريقة النطق في البداية</small></div><button class="round-btn" onclick="togglePhonetic()">'+(state.arabicPhonetic?"✓":"—")+'</button></div><div class="sentence"><div><b>الصوت الإنجليزي</b><small>🇺🇸 أمريكي • صوت بنت واضح</small></div><button class="round-btn" onclick="speak(\'Good morning, Reem!\',.9)">🔊</button></div><div class="teacher-note">تم تثبيت الصوت على الإنجليزية الأمريكية واختيار أفضل صوت أنثوي متوفر على الجهاز تلقائيًا.</div><div class="teacher-note">ملف عبدالعزيز منفصل ومحمي. زر 🔐 أعلى الصفحة يفتح ملف المدرّس.</div></section>',"account");
 }
 function togglePhonetic(){state.arabicPhonetic=!state.arabicPhonetic;save();account();}
-function toggleAccent(){state.accent=state.accent==="en-US"?"en-GB":"en-US";save();account();}
-let __reemAudio=null;
+
 let __reemUtterance=null;
-const __localAudio={
-  "bed":"./audio/bed.mp3",
-  "water":"./audio/water.mp3",
-  "shower":"./audio/shower.mp3"
-};
-function normalizeAudioKey(text){return String(text||"").trim().toLowerCase().replace(/[.!?]/g,"");}
+let __reemVoiceCache=[];
+
+function refreshReemVoices(){
+  try{__reemVoiceCache=window.speechSynthesis?window.speechSynthesis.getVoices()||[]:[];}catch(e){__reemVoiceCache=[];}
+}
+if("speechSynthesis" in window){
+  refreshReemVoices();
+  window.speechSynthesis.onvoiceschanged=refreshReemVoices;
+}
+
+function getBestFemaleUSVoice(){
+  refreshReemVoices();
+  const voices=__reemVoiceCache||[];
+  const us=voices.filter(v=>/^en[-_]US$/i.test(String(v.lang||"")));
+  const femaleNames=["Ava","Samantha","Allison","Susan","Zoe","Joelle","Noelle","Aria","Jenny","Emma","Michelle","Sara","Siri"];
+  const maleNames=["Alex","Fred","Tom","Aaron","Daniel","Guy","Davis","Eric","Christopher","Roger"];
+  function score(v){
+    const n=String(v.name||"");
+    let s=0;
+    if(/^en[-_]US$/i.test(String(v.lang||"")))s+=100;
+    if(/enhanced|premium|natural|neural|siri/i.test(n))s+=35;
+    femaleNames.forEach((name,i)=>{if(new RegExp(name,"i").test(n))s+=60-i;});
+    maleNames.forEach(name=>{if(new RegExp(name,"i").test(n))s-=100;});
+    if(/google us english/i.test(n))s+=25;
+    if(v.localService)s+=4;
+    return s;
+  }
+  const pool=us.length?us:voices.filter(v=>/^en/i.test(String(v.lang||"")));
+  return pool.slice().sort((a,b)=>score(b)-score(a))[0]||null;
+}
+
 function speak(text,rate=.9){
-  const key=normalizeAudioKey(text);
-  try{
-    if(__reemAudio){__reemAudio.pause();__reemAudio.currentTime=0;}
-    if(window.speechSynthesis&&speechSynthesis.speaking)speechSynthesis.cancel();
-  }catch(e){}
-  if(__localAudio[key]){
-    const a=new Audio(__localAudio[key]+"?v=audio-2");
-    __reemAudio=a;
-    a.preload="auto";
-    a.playbackRate=rate<=.7?.68:1;
-    a.defaultPlaybackRate=a.playbackRate;
-    a.volume=1;
-    const p=a.play();
-    if(p&&p.catch)p.catch(()=>speakNative(text,rate));
+  if(!("speechSynthesis" in window)){
+    showAudioMessage("الصوت غير مدعوم في هذا المتصفح.");
     return;
   }
-  speakNative(text,rate);
-}
-function speakNative(text,rate=.9){
-  if(!("speechSynthesis" in window)){showAudioMessage("الصوت غير مدعوم في هذا المتصفح.");return;}
   try{
+    speechSynthesis.cancel();
     if(speechSynthesis.paused)speechSynthesis.resume();
     const u=new SpeechSynthesisUtterance(String(text));
     __reemUtterance=u;
-    u.lang=state.accent||"en-US";
-    u.rate=rate<=.7?.62:.92;
-    u.pitch=1;
+    u.lang="en-US";
+    u.rate=rate<=.7?.62:.88;
+    u.pitch=1.03;
     u.volume=1;
-    const voices=speechSynthesis.getVoices()||[];
-    const exact=voices.find(v=>v.lang===u.lang);
-    const english=voices.find(v=>String(v.lang||"").toLowerCase().startsWith("en"));
-    if(exact||english)u.voice=exact||english;
-    u.onerror=()=>showAudioMessage("تعذر تشغيل الصوت. اضغط الزر مرة ثانية.");
+    const voice=getBestFemaleUSVoice();
+    if(voice)u.voice=voice;
+    u.onerror=()=>showAudioMessage("تعذر تشغيل الصوت. اضغطي الزر مرة ثانية.");
+    u.onstart=()=>{const box=document.getElementById("audioStatus");if(box)box.remove();};
     speechSynthesis.speak(u);
-  }catch(e){showAudioMessage("تعذر تشغيل الصوت. جرّب الضغط مرة ثانية.");}
+  }catch(e){
+    showAudioMessage("تعذر تشغيل الصوت. جرّبي الضغط مرة ثانية.");
+  }
 }
 function showAudioMessage(msg){
   let box=document.getElementById("audioStatus");
