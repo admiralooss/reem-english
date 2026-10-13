@@ -12,7 +12,17 @@ window.ReemAudio=(function(){
     "clothes":"clothes",
     "breakfast":"breakfast",
     "water":"water",
-    "ready":"ready"
+    "ready":"ready",
+    "alarm":"alarm",
+    "face":"face",
+    "toothpaste":"toothpaste",
+    "towel":"towel",
+    "mirror":"mirror",
+    "hair":"hair",
+    "brush":"brush",
+    "get dressed":"get-dressed",
+    "coffee":"coffee",
+    "shoes":"shoes"
   };
 
   function clean(text){
