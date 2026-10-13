@@ -44,6 +44,7 @@ window.ReemStore=(function(){
       const saved=JSON.parse(localStorage.getItem(CONTENT_KEY)||"null");
       if(saved&&Array.isArray(saved.categories)&&Array.isArray(saved.words)){
         const baseById=Object.fromEntries((base.words||[]).map(w=>[w.id,w]));
+        const savedIds=new Set((saved.words||[]).map(w=>w.id));
         let changed=false;
         saved.words=saved.words.map(w=>{
           const fresh=baseById[w.id];
@@ -52,6 +53,13 @@ window.ReemStore=(function(){
             return Object.assign({},w,{image:fresh.image});
           }
           return w;
+        });
+        (base.words||[]).forEach(w=>{
+          if(!savedIds.has(w.id)){saved.words.push(deepClone(w));changed=true;}
+        });
+        const catIds=new Set((saved.categories||[]).map(c=>c.id));
+        (base.categories||[]).forEach(c=>{
+          if(!catIds.has(c.id)){saved.categories.push(deepClone(c));changed=true;}
         });
         if(changed)localStorage.setItem(CONTENT_KEY,JSON.stringify(saved));
         return saved;
