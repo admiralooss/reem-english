@@ -16,8 +16,8 @@ window.REEM_WORDS=[
  {id:"towel",categoryId:"morning",en:"towel",ar:"منشفة",pronunciation:"تاوِل",exampleEn:"I dry my face with a towel.",exampleAr:"أنا أجفف وجهي بالمنشفة.",image:"./assets/words/towel.svg"},
  {id:"mirror",categoryId:"morning",en:"mirror",ar:"مرآة",pronunciation:"مِرَر",exampleEn:"I look in the mirror.",exampleAr:"أنا أنظر في المرآة.",image:"./assets/words/mirror.svg"},
  {id:"hair",categoryId:"morning",en:"hair",ar:"شعر",pronunciation:"هير",exampleEn:"I brush my hair.",exampleAr:"أنا أمشّط شعري.",image:"./assets/words/hair.svg"},
- {id:"brush",categoryId:"morning",en:"brush",ar:"يفرّش / يمشّط",pronunciation:"برَش",exampleEn:"I brush my teeth.",exampleAr:"أنا أفرّش أسناني.",image:"./assets/words/brush.svg"},
- {id:"get-dressed",categoryId:"morning",en:"get dressed",ar:"يرتدي ملابسه",pronunciation:"جِت دريست",exampleEn:"I get dressed after my shower.",exampleAr:"أنا أرتدي ملابسي بعد الاستحمام.",image:"./assets/words/get-dressed.svg"},
+ {id:"brush",categoryId:"morning",en:"brush",ar:"يفرّش / يمشّط",pronunciation:"برَش",exampleEn:"I brush my teeth.",exampleAr:"أنا أفرّش أسناني.",image:"./assets/words/toothbrush.svg"},
+ {id:"get-dressed",categoryId:"morning",en:"get dressed",ar:"يرتدي ملابسه",pronunciation:"گِت دريست",exampleEn:"I get dressed after my shower.",exampleAr:"أنا أرتدي ملابسي بعد الاستحمام.",image:"./assets/words/get-dressed.svg"},
  {id:"coffee",categoryId:"morning",en:"coffee",ar:"قهوة",pronunciation:"كوفي",exampleEn:"I drink coffee with breakfast.",exampleAr:"أنا أشرب القهوة مع الفطور.",image:"./assets/words/coffee.svg"},
  {id:"shoes",categoryId:"morning",en:"shoes",ar:"حذاء / أحذية",pronunciation:"شوز",exampleEn:"I put on my shoes.",exampleAr:"أنا أرتدي حذائي.",image:"./assets/words/shoes.svg"}
 ];
