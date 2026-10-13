@@ -14,52 +14,39 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - name: Install neural TTS
-        run: pip install edge-tts
-      - name: Generate American female pronunciation
+      - name: Install local speech tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y espeak-ng ffmpeg
+      - name: Generate missing American English pronunciation
         shell: bash
         run: |
           set -e
           mkdir -p audio/words
-          python - <<'PY'
-          import asyncio
-          from pathlib import Path
-          import edge_tts
-
-          words = {
-              "wake-up": "wake up",
-              "bed": "bed",
-              "bathroom": "bathroom",
-              "shower": "shower",
-              "wash": "wash",
-              "toothbrush": "toothbrush",
-              "clothes": "clothes",
-              "breakfast": "breakfast",
-              "water": "water",
-              "ready": "ready",
-              "alarm": "alarm",
-              "face": "face",
-              "toothpaste": "toothpaste",
-              "towel": "towel",
-              "mirror": "mirror",
-              "hair": "hair",
-              "brush": "brush",
-              "get-dressed": "get dressed",
-              "coffee": "coffee",
-              "shoes": "shoes",
+          make_audio () {
+            key="$1"
+            text="$2"
+            if [ ! -f "audio/words/$key.mp3" ]; then
+              espeak-ng -v en-us+f3 -s 145 -w "/tmp/$key.wav" "$text"
+              ffmpeg -y -loglevel error -i "/tmp/$key.wav" -codec:a libmp3lame -q:a 3 "audio/words/$key.mp3"
+            fi
+            if [ ! -f "audio/words/$key-slow.mp3" ]; then
+              espeak-ng -v en-us+f3 -s 100 -w "/tmp/$key-slow.wav" "$text"
+              ffmpeg -y -loglevel error -i "/tmp/$key-slow.wav" -codec:a libmp3lame -q:a 3 "audio/words/$key-slow.mp3"
+            fi
           }
-          VOICE = "en-US-JennyNeural"
 
-          async def make():
-              out = Path("audio/words")
-              for key, text in words.items():
-                  await edge_tts.Communicate(text, VOICE, rate="+0%").save(str(out / f"{key}.mp3"))
-                  await edge_tts.Communicate(text, VOICE, rate="-28%").save(str(out / f"{key}-slow.mp3"))
-          asyncio.run(make())
-          PY
+          make_audio "alarm" "alarm"
+          make_audio "face" "face"
+          make_audio "toothpaste" "toothpaste"
+          make_audio "towel" "towel"
+          make_audio "mirror" "mirror"
+          make_audio "hair" "hair"
+          make_audio "brush" "brush"
+          make_audio "get-dressed" "get dressed"
+          make_audio "coffee" "coffee"
+          make_audio "shoes" "shoes"
+
       - name: Commit generated audio
         shell: bash
         run: |
@@ -69,7 +56,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "No audio changes"
           else
-            git commit -m "build: add American female pronunciation audio [skip ci]"
+            git commit -m "build: add pronunciation audio for Morning lesson 2 [skip ci]"
             git pull --rebase origin main
             git push origin HEAD:main
           fi
