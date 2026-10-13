@@ -9,4 +9,15 @@ window.REEM_WORDS=[
  {id:"breakfast",categoryId:"morning",en:"breakfast",ar:"فطور",pronunciation:"بريكفست",exampleEn:"I eat breakfast at home.",exampleAr:"أنا أتناول الفطور في البيت.",image:"./assets/words/breakfast.svg"},
  {id:"water",categoryId:"morning",en:"water",ar:"ماء",pronunciation:"ووتر",exampleEn:"I drink water in the morning.",exampleAr:"أنا أشرب الماء في الصباح.",image:"./assets/words/water.svg"},
  {id:"ready",categoryId:"morning",en:"ready",ar:"جاهز / جاهزة",pronunciation:"رِدي",exampleEn:"I am ready to go.",exampleAr:"أنا جاهزة للذهاب.",image:"./assets/words/ready.svg"}
+,
+ {id:"alarm",categoryId:"morning",en:"alarm",ar:"منبّه",pronunciation:"ألارم",exampleEn:"My alarm rings at six.",exampleAr:"يرن المنبّه عند الساعة السادسة.",image:"./assets/words/alarm.svg"},
+ {id:"face",categoryId:"morning",en:"face",ar:"وجه",pronunciation:"فيس",exampleEn:"I wash my face.",exampleAr:"أنا أغسل وجهي.",image:"./assets/words/face.svg"},
+ {id:"toothpaste",categoryId:"morning",en:"toothpaste",ar:"معجون أسنان",pronunciation:"توث بيست",exampleEn:"I use toothpaste every morning.",exampleAr:"أنا أستخدم معجون الأسنان كل صباح.",image:"./assets/words/toothpaste.svg"},
+ {id:"towel",categoryId:"morning",en:"towel",ar:"منشفة",pronunciation:"تاوِل",exampleEn:"I dry my face with a towel.",exampleAr:"أنا أجفف وجهي بالمنشفة.",image:"./assets/words/towel.svg"},
+ {id:"mirror",categoryId:"morning",en:"mirror",ar:"مرآة",pronunciation:"مِرَر",exampleEn:"I look in the mirror.",exampleAr:"أنا أنظر في المرآة.",image:"./assets/words/mirror.svg"},
+ {id:"hair",categoryId:"morning",en:"hair",ar:"شعر",pronunciation:"هير",exampleEn:"I brush my hair.",exampleAr:"أنا أمشّط شعري.",image:"./assets/words/hair.svg"},
+ {id:"brush",categoryId:"morning",en:"brush",ar:"يفرّش / يمشّط",pronunciation:"برَش",exampleEn:"I brush my teeth.",exampleAr:"أنا أفرّش أسناني.",image:"./assets/words/brush.svg"},
+ {id:"get-dressed",categoryId:"morning",en:"get dressed",ar:"يرتدي ملابسه",pronunciation:"جِت دريست",exampleEn:"I get dressed after my shower.",exampleAr:"أنا أرتدي ملابسي بعد الاستحمام.",image:"./assets/words/get-dressed.svg"},
+ {id:"coffee",categoryId:"morning",en:"coffee",ar:"قهوة",pronunciation:"كوفي",exampleEn:"I drink coffee with breakfast.",exampleAr:"أنا أشرب القهوة مع الفطور.",image:"./assets/words/coffee.svg"},
+ {id:"shoes",categoryId:"morning",en:"shoes",ar:"حذاء / أحذية",pronunciation:"شوز",exampleEn:"I put on my shoes.",exampleAr:"أنا أرتدي حذائي.",image:"./assets/words/shoes.svg"}
 ];
