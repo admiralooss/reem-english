@@ -60,7 +60,7 @@ function home(){
   const p=profile(),c=content(),prog=courseProgress(p),left=Math.max(0,100-prog),lesson=morningLesson(p),today=lesson.words;
   shell(
     '<div class="topbar"><div class="welcome"><span class="eyebrow">✨ '+ordinalDay(dayNumber(p))+'</span><h1>أهلاً وسهلاً بك يا '+esc(p.name)+'</h1><p>كل يوم 10 كلمات عملية من حياتك اليومية، بصور ونطق وجملة واضحة.</p></div>'+topSummary(p)+'</div>'+
-    '<div class="layout"><section class="hero card"><div class="hero-content"><span class="eyebrow">☀️ درس اليوم '+lesson.number+' • عائلة الصباح</span><h2>10 كلمات جديدة</h2><p>'+(lesson.number===1?"نبدأ بالكلمات اللي تستخدمينها من أول ما تصحين: الاستيقاظ، السرير، الحمّام، الفطور، الماء والاستعداد.":"نكمل نفس عائلة الصباح: المنبّه، الوجه، معجون الأسنان، المنشفة، المرآة، الشعر، اللبس، القهوة والحذاء.")+'</p><div class="hero-actions"><button class="primary" onclick="startStudy(0)">ابدئي كلمات اليوم ▶</button><button class="ghost" onclick="wordsPage()">شوفي الكلمات كلها</button></div><div class="progress-block"><div class="progress-label"><span>التقدم الكلي</span><b>'+prog+'% • المتبقي '+left+'%</b></div><div class="progress-track"><i style="width:'+prog+'%"></i></div></div></div></section>'+
+    '<div class="layout"><section class="hero card"><div class="hero-content"><span class="eyebrow">☀️ درس اليوم '+lesson.number+' • عائلة الصباح</span><h2>10 كلمات جديدة</h2><p>'+(lesson.number===1?"نبدأ بالكلمات اللي تستخدمينها من أول ما تصحين: الاستيقاظ، السرير، الحمّام، الفطور، الماء والاستعداد.":"نكمل نفس عائلة الصباح: المنبّه، الوجه، معجون الأسنان، المنشفة، المرآة، الشعر، اللبس، القهوة والحذاء.")+'</p><div class="hero-actions"><button class="primary" onclick="startStudy(0)">ابدئي كلمات اليوم ▶</button><button class="secondary" onclick="startMorningTest()">🎧 اختبار الدرسين</button><button class="ghost" onclick="wordsPage()">شوفي الكلمات كلها</button></div><div class="progress-block"><div class="progress-label"><span>التقدم الكلي</span><b>'+prog+'% • المتبقي '+left+'%</b></div><div class="progress-track"><i style="width:'+prog+'%"></i></div></div></div></section>'+
     '<aside class="side-stack"><section class="today card"><div class="section-head"><h3>كلمات اليوم</h3><small>'+today.length+' كلمات</small></div><div class="today-list">'+today.slice(0,6).map(w=>miniWord(w,p)).join("")+'</div></section><section class="today card"><div class="section-head"><h3>المستوى الحالي</h3><small>'+currentLevel(p).nameEn+'</small></div><div class="progress-block"><div class="progress-label"><span>'+currentLevel(p).nameAr+'</span><b>'+levelProgress(p)+'%</b></div><div class="progress-track"><i style="width:'+levelProgress(p)+'%"></i></div></div><p style="color:var(--muted);font-size:.78rem;line-height:1.7;margin:12px 0 0">الانتقال للمستوى التالي يعتمد على النقاط والاختبارات التي يحددها المعلم.</p></section></aside></div>'+
     '<section class="categories card"><div class="section-head"><h3>عائلات الكلمات</h3><small>يمكن للمعلم إضافة فئات جديدة</small></div><div class="category-grid">'+(c.categories||[]).map(cat=>categoryCard(cat,c.words)).join("")+'</div></section>'
   ,"home");
@@ -155,6 +155,100 @@ function nextWord(i){
   const words=morningLesson(profile()).words;
   if(i<words.length-1)startStudy(i+1);else home();
 }
+
+let __morningTest=null;
+function morningTestWords(){
+  return (content().words||[]).filter(w=>w.categoryId==="morning").slice(0,20);
+}
+function shuffled(list){
+  const a=list.slice();
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}
+  return a;
+}
+function buildMorningTest(){
+  const words=morningTestWords();
+  const order=shuffled(words.map(w=>w.id));
+  const questions=order.map(id=>{
+    const target=words.find(w=>w.id===id);
+    const distractors=shuffled(words.filter(w=>w.id!==id)).slice(0,3);
+    return {target,options:shuffled([target,...distractors])};
+  });
+  return {questions,index:0,score:0,answers:[],locked:false};
+}
+function startMorningTest(){
+  applyPrefs();
+  if(window.ReemAudio)ReemAudio.stop();
+  const words=morningTestWords();
+  if(words.length<20){
+    return shell('<section class="test-card card"><span class="eyebrow">🎧 اختبار الاستماع</span><h1>الاختبار يحتاج 20 كلمة</h1><p>حالياً الكلمات المتاحة أقل من 20.</p><button class="primary" onclick="home()">العودة</button></section>',"home",false);
+  }
+  __morningTest=buildMorningTest();
+  renderMorningTest();
+}
+function renderMorningTest(){
+  if(!__morningTest)return startMorningTest();
+  const t=__morningTest,q=t.questions[t.index],num=t.index+1,total=t.questions.length;
+  APP.innerHTML='<main class="student-app"><div class="test-shell">'+
+   '<div class="test-top"><button class="back" onclick="home()">←</button><div><b>اختبار الدرسين • عائلة الصباح</b><small>استماع وتحديد الكلمة</small></div><span class="eyebrow">'+num+' / '+total+'</span></div>'+
+   '<section class="test-card card"><div class="progress-track"><i style="width:'+(num/total*100)+'%"></i></div>'+
+   '<div class="test-question"><span class="test-icon">🎧</span><h1>اسمعي واختاري الكلمة الصحيحة</h1><p>اضغطي على الصوت، ثم اختاري الكلمة الإنجليزية التي سمعتيها.</p>'+
+   '<div class="test-audio"><button class="listen-main" onclick="playTestWord(false)">🔊 اسمعي الكلمة</button><button class="listen-slow" onclick="playTestWord(true)">🐢 أبطأ</button></div>'+
+   '<div class="test-options">'+q.options.map((w,i)=>'<button id="testOpt'+i+'" onclick="answerMorningTest(\''+w.id+'\','+i+')"><b dir="ltr">'+esc(w.en)+'</b></button>').join("")+'</div>'+
+   '<div id="testFeedback" class="test-feedback"></div>'+
+   '<button id="testNext" class="primary test-next" onclick="nextMorningTest()" disabled>'+(num===total?"عرض النتيجة":"السؤال التالي →")+'</button>'+
+   '</div></section></div></main>';
+  setTimeout(()=>playTestWord(false),350);
+}
+function playTestWord(slow){
+  if(!__morningTest)return;
+  const q=__morningTest.questions[__morningTest.index];
+  if(window.ReemAudio)ReemAudio.speak(q.target.en,!!slow);
+}
+function answerMorningTest(id,optionIndex){
+  if(!__morningTest||__morningTest.locked)return;
+  __morningTest.locked=true;
+  const q=__morningTest.questions[__morningTest.index];
+  const correct=id===q.target.id;
+  if(correct)__morningTest.score++;
+  __morningTest.answers.push({wordId:q.target.id,selectedId:id,correct});
+  q.options.forEach((w,i)=>{
+    const b=document.getElementById("testOpt"+i);
+    if(!b)return;
+    b.disabled=true;
+    if(w.id===q.target.id)b.classList.add("correct");
+    else if(i===optionIndex&&!correct)b.classList.add("wrong");
+  });
+  const f=document.getElementById("testFeedback");
+  if(f)f.innerHTML=correct?'✅ <b>إجابة صحيحة</b>':'❌ الإجابة الصحيحة: <b dir="ltr">'+esc(q.target.en)+'</b>';
+  const n=document.getElementById("testNext");if(n)n.disabled=false;
+}
+function nextMorningTest(){
+  if(!__morningTest||!__morningTest.locked)return;
+  if(__morningTest.index<__morningTest.questions.length-1){
+    __morningTest.index++;__morningTest.locked=false;renderMorningTest();
+  }else finishMorningTest();
+}
+function finishMorningTest(){
+  if(!__morningTest)return;
+  if(window.ReemAudio)ReemAudio.stop();
+  const t=__morningTest,total=t.questions.length,score=t.score,pct=Math.round(score/total*100);
+  const wrong=t.answers.filter(a=>!a.correct);
+  const p=profile();
+  p.completedTests=(p.completedTests||0)+1;
+  p.points=(p.points||0)+score*2;
+  ReemStore.saveProfile(p);
+  const subs=ReemStore.getSubmissions();
+  subs.push({id:"morning-listening-"+Date.now(),type:"listening-word-choice",title:"اختبار الدرسين — عائلة الصباح",score,total,percent:pct,answers:t.answers,submittedAt:new Date().toISOString()});
+  ReemStore.saveSubmissions(subs);
+  APP.innerHTML='<main class="student-app"><div class="test-shell"><section class="test-card result-card card">'+
+   '<div class="result-ring"><strong>'+pct+'%</strong><span>'+score+' / '+total+'</span></div>'+
+   '<span class="eyebrow">🎧 نتيجة اختبار الاستماع</span><h1>'+(pct>=80?"ممتاز!":"نراجع الكلمات اللي تحتاج تثبيت")+'</h1>'+
+   '<p>الاختبار كان من جميع كلمات الدرس الأول والثاني، 20 سؤال استماع واختيار.</p>'+
+   (wrong.length?'<div class="wrong-review"><b>الكلمات التي تحتاج مراجعة</b><div>'+wrong.map(a=>{const w=morningTestWords().find(x=>x.id===a.wordId);return '<span dir="ltr">'+esc(w?w.en:a.wordId)+'</span>'}).join("")+'</div></div>':'<div class="test-feedback success">🏆 كل الإجابات صحيحة!</div>')+
+   '<div class="result-actions"><button class="primary" onclick="startMorningTest()">إعادة الاختبار</button><button class="ghost" onclick="home()">الرئيسية</button></div>'+
+   '</section></div></main>';
+}
+
 function wordsPage(categoryId){
   applyPrefs();
   const c=content(),p=profile();let words=c.words||[];
