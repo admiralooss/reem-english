@@ -37,6 +37,35 @@ function morningLesson(p=profile()){
   if(idx<0)idx=sets.length-1;
   return {words:sets[idx],number:idx+1,total:sets.length};
 }
+function lessonForCategory(categoryId,p=profile()){
+  if(categoryId==="morning"){
+    const m=morningLesson(p);
+    return Object.assign({},m,{
+      categoryId:"morning",categoryName:"عائلة الصباح",icon:"☀️",
+      label:"الدرس "+m.number,
+      intro:m.number===1
+        ?"نبدأ بالكلمات اللي تستخدمينها من أول ما تصحين: الاستيقاظ، السرير، الحمّام، الفطور، الماء والاستعداد."
+        :"نكمل نفس عائلة الصباح: المنبّه، الوجه، معجون الأسنان، المنشفة، المرآة، الشعر، اللبس، القهوة والحذاء."
+    });
+  }
+  if(categoryId==="errands"){
+    const words=(content().words||[]).filter(w=>w.categoryId==="errands").slice(0,20);
+    return {
+      words,number:1,total:1,categoryId:"errands",categoryName:"عائلة المشاوير اليومية",icon:"🛍️",
+      label:"درس جديد",
+      intro:"20 كلمة يومية أقوى شوي: المواعيد، الإيصالات، الطوابير، الاتجاهات، التسوق، الحجز والتوصيل."
+    };
+  }
+  return {words:[],number:1,total:0,categoryId:categoryId||"",categoryName:"الدرس",icon:"📚",label:"درس",intro:""};
+}
+function activeLesson(p=profile()){
+  const morning=(content().words||[]).filter(w=>w.categoryId==="morning").slice(0,20);
+  const morningDone=morning.length>=20 && morning.every(w=>p.learnedWordIds.includes(w.id));
+  if(!morningDone)return lessonForCategory("morning",p);
+  const errands=(content().words||[]).filter(w=>w.categoryId==="errands").slice(0,20);
+  if(errands.length)return lessonForCategory("errands",p);
+  return lessonForCategory("morning",p);
+}
 function applyPrefs(){
   const p=profile(),pref=p.preferences||{};
   document.body.classList.remove("theme-light","accent-pink","accent-purple","accent-blue");
@@ -57,10 +86,10 @@ function topSummary(p){
 }
 function home(){
   applyPrefs();
-  const p=profile(),c=content(),prog=courseProgress(p),left=Math.max(0,100-prog),lesson=morningLesson(p),today=lesson.words;
+  const p=profile(),c=content(),prog=courseProgress(p),left=Math.max(0,100-prog),lesson=activeLesson(p),today=lesson.words;
   shell(
-    '<div class="topbar"><div class="welcome"><span class="eyebrow">✨ '+ordinalDay(dayNumber(p))+'</span><h1>أهلاً وسهلاً بك يا '+esc(p.name)+'</h1><p>كل يوم 10 كلمات عملية من حياتك اليومية، بصور ونطق وجملة واضحة.</p></div>'+topSummary(p)+'</div>'+
-    '<div class="layout"><section class="hero card"><div class="hero-content"><span class="eyebrow">☀️ درس اليوم '+lesson.number+' • عائلة الصباح</span><h2>10 كلمات جديدة</h2><p>'+(lesson.number===1?"نبدأ بالكلمات اللي تستخدمينها من أول ما تصحين: الاستيقاظ، السرير، الحمّام، الفطور، الماء والاستعداد.":"نكمل نفس عائلة الصباح: المنبّه، الوجه، معجون الأسنان، المنشفة، المرآة، الشعر، اللبس، القهوة والحذاء.")+'</p><div class="hero-actions"><button class="primary" onclick="startStudy(0)">ابدئي كلمات اليوم ▶</button><button class="secondary" onclick="startMorningTest()">🎧 اختبار الدرسين</button><button class="ghost" onclick="wordsPage()">شوفي الكلمات كلها</button></div><div class="progress-block"><div class="progress-label"><span>التقدم الكلي</span><b>'+prog+'% • المتبقي '+left+'%</b></div><div class="progress-track"><i style="width:'+prog+'%"></i></div></div></div></section>'+
+    '<div class="topbar"><div class="welcome"><span class="eyebrow">✨ '+ordinalDay(dayNumber(p))+'</span><h1>أهلاً وسهلاً بك يا '+esc(p.name)+'</h1><p>كل يوم كلمات عملية من الحياة اليومية، بصور ونطق وجملة واضحة.</p></div>'+topSummary(p)+'</div>'+
+    '<div class="layout"><section class="hero card"><div class="hero-content"><span class="eyebrow">'+lesson.icon+' '+lesson.label+' • '+lesson.categoryName+'</span><h2>'+lesson.words.length+' كلمة جديدة</h2><p>'+lesson.intro+'</p><div class="hero-actions"><button class="primary" onclick="startStudy(0,\''+lesson.categoryId+'\')">ابدئي كلمات اليوم ▶</button><button class="secondary" onclick="startMorningTest()">🎧 اختبار عائلة الصباح</button><button class="ghost" onclick="wordsPage()">شوفي الكلمات كلها</button></div><div class="progress-block"><div class="progress-label"><span>التقدم الكلي</span><b>'+prog+'% • المتبقي '+left+'%</b></div><div class="progress-track"><i style="width:'+prog+'%"></i></div></div></div></section>'+
     '<aside class="side-stack"><section class="today card"><div class="section-head"><h3>كلمات اليوم</h3><small>'+today.length+' كلمات</small></div><div class="today-list">'+today.slice(0,6).map(w=>miniWord(w,p)).join("")+'</div></section><section class="today card"><div class="section-head"><h3>المستوى الحالي</h3><small>'+currentLevel(p).nameEn+'</small></div><div class="progress-block"><div class="progress-label"><span>'+currentLevel(p).nameAr+'</span><b>'+levelProgress(p)+'%</b></div><div class="progress-track"><i style="width:'+levelProgress(p)+'%"></i></div></div><p style="color:var(--muted);font-size:.78rem;line-height:1.7;margin:12px 0 0">الانتقال للمستوى التالي يعتمد على النقاط والاختبارات التي يحددها المعلم.</p></section></aside></div>'+
     '<section class="categories card"><div class="section-head"><h3>عائلات الكلمات</h3><small>يمكن للمعلم إضافة فئات جديدة</small></div><div class="category-grid">'+(c.categories||[]).map(cat=>categoryCard(cat,c.words)).join("")+'</div></section>'
   ,"home");
@@ -75,24 +104,24 @@ function categoryCard(cat,words){
 }
 let __recordTimer=null;
 
-function startStudy(index=0){
+function startStudy(index=0,categoryId){
   applyPrefs();
   if(window.ReemAudio)ReemAudio.stop();
   if(window.ReemRecorder&&ReemRecorder.isRecording())ReemRecorder.cancel();
 
-  const p=profile(),lesson=morningLesson(p),words=lesson.words;
+  const p=profile(),lesson=categoryId?lessonForCategory(categoryId,p):activeLesson(p),words=lesson.words;
   if(!words.length)return wordsPage();
   const i=Math.max(0,Math.min(words.length-1,index)),w=words[i];
 
   APP.innerHTML='<main class="student-app"><div class="study-shell">'+
-    '<div class="study-top"><button class="back" onclick="home()">←</button><div><b>عائلة الصباح • الدرس '+lesson.number+'</b><div class="word-count">'+(i+1)+' / '+words.length+'</div></div><span class="eyebrow">'+courseProgress(p)+'% إجمالي</span></div>'+
+    '<div class="study-top"><button class="back" onclick="home()">←</button><div><b>'+lesson.categoryName+' • '+lesson.label+'</b><div class="word-count">'+(i+1)+' / '+words.length+'</div></div><span class="eyebrow">'+courseProgress(p)+'% إجمالي</span></div>'+
     '<section class="study-card card"><div class="progress-track"><i style="width:'+((i+1)/words.length*100)+'%"></i></div>'+
     '<div class="word-layout"><img class="word-image" src="'+esc(w.image)+'" alt="'+esc(w.en)+'">'+
     '<div class="word-copy"><div class="word-count">كلمة اليوم</div><h2 dir="ltr">'+esc(w.en)+'</h2><div class="arabic">'+esc(w.ar)+'</div><div class="pron">'+esc(w.pronunciation)+'</div>'+
     '<div class="audio-actions"><button class="normal" onclick="playWord(\''+esc(w.en)+'\',false)">🔊 عادي</button><button class="slow" onclick="playWord(\''+esc(w.en)+'\',true)">🐢 بطيء</button></div>'+
     '<div class="record-panel"><button id="recordBtn" class="record-main" onclick="toggleRecording(\''+esc(w.en)+'\')">🎙️ سجلي نطقك</button><div id="recordStatus" class="record-status">اسمعي الكلمة أول، ثم سجلي صوتك وقارنيه بالنطق الصحيح.</div><div id="recordPlayback"></div></div>'+
     '<div class="example-card"><b>'+esc(w.exampleEn)+'</b><small>'+esc(w.exampleAr)+'</small></div>'+
-    '<div class="word-actions"><button class="learned" onclick="markLearned(\''+w.id+'\','+i+')">✓ حفظتها</button><button class="review" onclick="markReview(\''+w.id+'\','+i+')">↻ راجعها</button><button onclick="nextWord('+i+')">'+(i===words.length-1?"إنهاء اليوم":"التالي →")+'</button></div>'+
+    '<div class="word-actions"><button class="learned" onclick="markLearned(\''+w.id+'\','+i+',\''+lesson.categoryId+'\')">✓ حفظتها</button><button class="review" onclick="markReview(\''+w.id+'\','+i+',\''+lesson.categoryId+'\')">↻ راجعها</button><button onclick="nextWord('+i+',\''+lesson.categoryId+'\')">'+(i===words.length-1?"إنهاء اليوم":"التالي →")+'</button></div>'+
     '</div></div></section></div></main>';
 }
 
@@ -149,11 +178,11 @@ async function finishRecording(target){
   }
 }
 
-function markLearned(id,i){ReemStore.addLearned(id);startStudy(i)}
-function markReview(id,i){ReemStore.addReview(id);startStudy(i)}
-function nextWord(i){
-  const words=morningLesson(profile()).words;
-  if(i<words.length-1)startStudy(i+1);else home();
+function markLearned(id,i,categoryId){ReemStore.addLearned(id);startStudy(i,categoryId)}
+function markReview(id,i,categoryId){ReemStore.addReview(id);startStudy(i,categoryId)}
+function nextWord(i,categoryId){
+  const lesson=lessonForCategory(categoryId,profile()),words=lesson.words;
+  if(i<words.length-1)startStudy(i+1,categoryId);else home();
 }
 
 let __morningTest=null;
