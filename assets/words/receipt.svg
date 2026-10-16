@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 650" role="img">
+<defs>
+ <linearGradient id="g33" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#171b3d"/><stop offset=".55" stop-color="#4b315f"/><stop offset="1" stop-color="#c99acb"/></linearGradient>
+ <radialGradient id="r33" cx=".7" cy=".2" r=".65"><stop stop-color="#ffd5a7" stop-opacity=".38"/><stop offset="1" stop-color="#ffd5a7" stop-opacity="0"/></radialGradient>
+ <filter id="s33"><feDropShadow dx="0" dy="22" stdDeviation="18" flood-opacity=".28"/></filter>
+</defs>
+<rect width="900" height="650" rx="54" fill="url(#g33)"/>
+<rect width="900" height="650" rx="54" fill="url(#r33)"/>
+<circle cx="125" cy="530" r="155" fill="#7869ff" opacity=".12"/>
+<circle cx="785" cy="110" r="115" fill="#ffd28e" opacity=".12"/>
+<g filter="url(#s33)">
+ <rect x="210" y="125" width="480" height="400" rx="80" fill="#ffffff" opacity=".09" stroke="#ffffff" stroke-opacity=".16" stroke-width="4"/>
+ <text x="450" y="365" text-anchor="middle" dominant-baseline="middle" font-size="210" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">🧾</text>
+</g>
+</svg>
