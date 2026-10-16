@@ -22,7 +22,27 @@ window.ReemAudio=(function(){
     "brush":"brush",
     "get dressed":"get-dressed",
     "coffee":"coffee",
-    "shoes":"shoes"
+    "shoes":"shoes",
+    "appointment":"appointment",
+    "available":"available",
+    "receipt":"receipt",
+    "change":"change",
+    "queue":"queue",
+    "cashier":"cashier",
+    "entrance":"entrance",
+    "exit":"exit",
+    "elevator":"elevator",
+    "intersection":"intersection",
+    "traffic":"traffic",
+    "shortcut":"shortcut",
+    "pharmacy":"pharmacy",
+    "grocery":"grocery",
+    "aisle":"aisle",
+    "wallet":"wallet",
+    "reservation":"reservation",
+    "delivery":"delivery",
+    "refund":"refund",
+    "crowded":"crowded"
   };
 
   function clean(text){
@@ -70,7 +90,7 @@ window.ReemAudio=(function(){
     const key=wordMap[clean(text)];
     if(!key)return nativeSpeak(text,slow);
 
-    const src=new URL("./audio/words/"+key+(slow?"-slow":"")+".mp3?v=voice-morning2-1",document.baseURI).href;
+    const src=new URL("./audio/words/"+key+(slow?"-slow":"")+".mp3?v=voice-errands1-1",document.baseURI).href;
     try{
       const a=new Audio();
       currentAudio=a;
