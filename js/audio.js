@@ -42,7 +42,17 @@ window.ReemAudio=(function(){
     "reservation":"reservation",
     "delivery":"delivery",
     "refund":"refund",
-    "crowded":"crowded"
+    "crowded":"crowded",
+    "schedule":"schedule",
+    "counter":"counter",
+    "package":"package",
+    "parking":"parking",
+    "address":"address",
+    "nearby":"nearby",
+    "delayed":"delayed",
+    "pickup":"pickup",
+    "exchange":"exchange",
+    "confirm":"confirm"
   };
 
   function clean(text){
@@ -90,7 +100,7 @@ window.ReemAudio=(function(){
     const key=wordMap[clean(text)];
     if(!key)return nativeSpeak(text,slow);
 
-    const src=new URL("./audio/words/"+key+(slow?"-slow":"")+".mp3?v=voice-errands1-1",document.baseURI).href;
+    const src=new URL("./audio/words/"+key+(slow?"-slow":"")+".mp3?v=voice-errands3-1",document.baseURI).href;
     try{
       const a=new Audio();
       currentAudio=a;
