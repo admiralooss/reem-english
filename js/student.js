@@ -49,11 +49,17 @@ function lessonForCategory(categoryId,p=profile()){
     });
   }
   if(categoryId==="errands"){
-    const words=(content().words||[]).filter(w=>w.categoryId==="errands").slice(0,20);
+    const all=(content().words||[]).filter(w=>w.categoryId==="errands").slice(0,20);
+    const sets=[all.slice(0,10),all.slice(10,20)].filter(x=>x.length);
+    let idx=sets.findIndex(set=>set.some(w=>!p.learnedWordIds.includes(w.id)));
+    if(idx<0)idx=sets.length-1;
+    const words=sets[idx]||[];
     return {
-      words,number:1,total:1,categoryId:"errands",categoryName:"عائلة المشاوير اليومية",icon:"🛍️",
-      label:"درس جديد",
-      intro:"20 كلمة يومية أقوى شوي: المواعيد، الإيصالات، الطوابير، الاتجاهات، التسوق، الحجز والتوصيل."
+      words,number:idx+1,total:sets.length,categoryId:"errands",categoryName:"عائلة المشاوير اليومية",icon:"🛍️",
+      label:"الدرس "+(idx+1),
+      intro:idx===0
+        ?"10 كلمات يومية أقوى شوي: الموعد، التوفر، الإيصال، الباقي، الطابور، الكاشير، المدخل، المخرج، المصعد والتقاطع."
+        :"نكمل 10 كلمات من نفس العائلة: الزحمة، الطريق المختصر، الصيدلية، البقالة، ممر المتجر، المحفظة، الحجز، التوصيل، الاسترجاع ومزدحم."
     };
   }
   return {words:[],number:1,total:0,categoryId:categoryId||"",categoryName:"الدرس",icon:"📚",label:"درس",intro:""};
