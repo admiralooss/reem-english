@@ -300,3 +300,6 @@ function settingsPage(){
 }
 function setPref(key,value){const p=profile();p.preferences=p.preferences||{};p.preferences[key]=value;ReemStore.saveProfile(p);settingsPage();}
 applyPrefs();home();
+if(window.ReemCloud){
+  ReemCloud.mergeAndSync().then(()=>{applyPrefs();home();}).catch(()=>{});
+}
