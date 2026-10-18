@@ -29,7 +29,7 @@ window.ReemStore=(function(){
       return Object.assign(defaultProfile(),JSON.parse(localStorage.getItem(PROFILE_KEY)||"{}"));
     }catch(e){return defaultProfile();}
   }
-  function saveProfile(profile){localStorage.setItem(PROFILE_KEY,JSON.stringify(profile));return profile;}
+  function saveProfile(profile){localStorage.setItem(PROFILE_KEY,JSON.stringify(profile));if(window.ReemCloud)ReemCloud.queuePush();return profile;}
   function patchProfile(patch){const p=getProfile();Object.assign(p,patch||{});return saveProfile(p);}
 
   function baseContent(){
@@ -79,6 +79,7 @@ window.ReemStore=(function(){
     fresh.preferences=old.preferences||fresh.preferences;
     saveProfile(fresh);
     localStorage.removeItem(SUBMISSIONS_KEY);
+    if(window.ReemCloud)ReemCloud.queuePush();
     return fresh;
   }
 
@@ -98,7 +99,7 @@ window.ReemStore=(function(){
   function getTests(){try{return JSON.parse(localStorage.getItem(TESTS_KEY)||"[]")}catch(e){return[]}}
   function saveTests(v){localStorage.setItem(TESTS_KEY,JSON.stringify(v||[]));}
   function getSubmissions(){try{return JSON.parse(localStorage.getItem(SUBMISSIONS_KEY)||"[]")}catch(e){return[]}}
-  function saveSubmissions(v){localStorage.setItem(SUBMISSIONS_KEY,JSON.stringify(v||[]));}
+  function saveSubmissions(v){localStorage.setItem(SUBMISSIONS_KEY,JSON.stringify(v||[]));if(window.ReemCloud)ReemCloud.queuePush();}
 
   return {
     keys:{PROFILE_KEY,CONTENT_KEY,TESTS_KEY,SUBMISSIONS_KEY},
