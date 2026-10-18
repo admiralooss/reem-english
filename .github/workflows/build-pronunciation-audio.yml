@@ -68,6 +68,17 @@ jobs:
           make_audio "refund" "refund"
           make_audio "crowded" "crowded"
 
+          make_audio "schedule" "schedule"
+          make_audio "counter" "counter"
+          make_audio "package" "package"
+          make_audio "parking" "parking"
+          make_audio "address" "address"
+          make_audio "nearby" "nearby"
+          make_audio "delayed" "delayed"
+          make_audio "pickup" "pickup"
+          make_audio "exchange" "exchange"
+          make_audio "confirm" "confirm"
+
       - name: Commit generated audio
         shell: bash
         run: |
