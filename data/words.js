@@ -41,4 +41,15 @@ window.REEM_WORDS=[
  {id:"delivery",categoryId:"errands",en:"delivery",ar:"توصيل",pronunciation:"دِلِڤَري",exampleEn:"The delivery will arrive tonight.",exampleAr:"سيصل التوصيل الليلة.",image:"./assets/words/delivery.svg"},
  {id:"refund",categoryId:"errands",en:"refund",ar:"استرجاع المبلغ",pronunciation:"ريفَند",exampleEn:"I would like a refund, please.",exampleAr:"أرغب في استرجاع المبلغ من فضلك.",image:"./assets/words/refund.svg"},
  {id:"crowded",categoryId:"errands",en:"crowded",ar:"مزدحم",pronunciation:"كراودِد",exampleEn:"The store is crowded today.",exampleAr:"المتجر مزدحم اليوم.",image:"./assets/words/crowded.svg"}
+,
+ {id:"schedule",categoryId:"errands",en:"schedule",ar:"جدول / مواعيد",pronunciation:"سْكَجول",exampleEn:"I need to check my schedule.",exampleAr:"أحتاج أن أراجع جدولي.",image:"./assets/words/schedule.svg"},
+ {id:"counter",categoryId:"errands",en:"counter",ar:"كاونتر / مكتب خدمة",pronunciation:"كاونتر",exampleEn:"Please go to the service counter.",exampleAr:"اذهب إلى كاونتر الخدمة من فضلك.",image:"./assets/words/counter.svg"},
+ {id:"package",categoryId:"errands",en:"package",ar:"طرد / شحنة",pronunciation:"باكِج",exampleEn:"My package arrived this morning.",exampleAr:"وصلت شحنتي هذا الصباح.",image:"./assets/words/package.svg"},
+ {id:"parking",categoryId:"errands",en:"parking",ar:"موقف سيارات",pronunciation:"باركِنغ",exampleEn:"Is there parking nearby?",exampleAr:"هل يوجد موقف سيارات قريب؟",image:"./assets/words/parking.svg"},
+ {id:"address",categoryId:"errands",en:"address",ar:"عنوان",pronunciation:"أدرِس",exampleEn:"Send me the address, please.",exampleAr:"أرسل لي العنوان من فضلك.",image:"./assets/words/address.svg"},
+ {id:"nearby",categoryId:"errands",en:"nearby",ar:"بالقرب / قريب",pronunciation:"نيرباي",exampleEn:"There is a pharmacy nearby.",exampleAr:"توجد صيدلية قريبة.",image:"./assets/words/nearby.svg"},
+ {id:"delayed",categoryId:"errands",en:"delayed",ar:"متأخر / متأجلة",pronunciation:"دِليد",exampleEn:"My delivery is delayed.",exampleAr:"طلبي متأخر.",image:"./assets/words/delayed.svg"},
+ {id:"pickup",categoryId:"errands",en:"pickup",ar:"استلام",pronunciation:"بِك أب",exampleEn:"Your order is ready for pickup.",exampleAr:"طلبك جاهز للاستلام.",image:"./assets/words/pickup.svg"},
+ {id:"exchange",categoryId:"errands",en:"exchange",ar:"استبدال",pronunciation:"إكسچينج",exampleEn:"Can I exchange this size?",exampleAr:"هل يمكنني استبدال هذا المقاس؟",image:"./assets/words/exchange.svg"},
+ {id:"confirm",categoryId:"errands",en:"confirm",ar:"يؤكد",pronunciation:"كَنفيرم",exampleEn:"Please confirm the appointment.",exampleAr:"يرجى تأكيد الموعد.",image:"./assets/words/confirm.svg"}
 ];
