@@ -31,7 +31,10 @@ function shell(body,title,sub){
 }
 function go(p){page=p;render();}
 function render(){if(!logged())return login();if(page==="dashboard")dashboard();else if(page==="profile")profilePage();else if(page==="content")contentPage();else testsPage();}
-function dashboard(){
+async function dashboard(){
+  if(window.ReemCloud){
+    try{await ReemCloud.pull()}catch(e){}
+  }
   const p=profile(),c=content(),prog=courseProgress(p),lvl=currentLevel(p);
   shell('<section class="grid4"><div class="card metric"><div class="ico">⭐</div><b>'+p.points+'</b><span>النقاط</span></div><div class="card metric"><div class="ico">📚</div><b>'+p.learnedWordIds.length+'/'+c.words.length+'</b><span>كلمات محفوظة</span></div><div class="card metric"><div class="ico">📝</div><b>'+p.completedTests+'</b><span>اختبارات منجزة</span></div><div class="card metric"><div class="ico">📊</div><b>'+prog+'%</b><span>التقدم</span></div></section><section class="two"><div class="card"><div class="section-head"><h2>الطالب الحالي</h2><small>'+esc(lvl.nameEn)+'</small></div><div class="status"><h3>'+esc(p.name)+'</h3><p>العمر: '+(p.age??"غير محدد")+' • المستوى: '+esc(lvl.nameAr)+'</p><div class="progress"><i style="width:'+prog+'%"></i></div><p style="margin-top:8px">المتبقي: '+(100-prog)+'%</p></div><div class="actions" style="margin-top:10px"><button class="primary" onclick="go(\'profile\')">تعديل الملف</button><button class="ghost" onclick="go(\'content\')">إدارة الكلمات</button></div></div><div class="card"><div class="section-head"><h2>المرحلة الأولى</h2><small>10 كلمات يوميًا</small></div><div class="status"><h3>عائلة الصباح ☀️</h3><p>الكلمات الحالية: '+c.words.filter(w=>w.categoryId==="morning").length+' كلمات</p><div class="progress"><i style="width:'+Math.min(100,c.words.filter(w=>w.categoryId==="morning").length*10)+'%"></i></div></div><div class="notice" style="margin-top:10px">الاختبارات الكاملة ستكون المرحلة الثانية. الآن نثبت الكلمات، الملف، التقدم، والفئات.</div></div></section>',"لوحة المعلم","طالب واحد فقط، وكل الصلاحيات عندك.");
 }
