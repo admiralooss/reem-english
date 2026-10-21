@@ -79,6 +79,17 @@ jobs:
           make_audio "exchange" "exchange"
           make_audio "confirm" "confirm"
 
+          make_audio "cancel" "cancel"
+          make_audio "reschedule" "reschedule"
+          make_audio "location" "location"
+          make_audio "directions" "directions"
+          make_audio "upstairs" "upstairs"
+          make_audio "downstairs" "downstairs"
+          make_audio "checkout" "checkout"
+          make_audio "contactless" "contactless"
+          make_audio "out-of-stock" "out of stock"
+          make_audio "return" "return"
+
       - name: Commit generated audio
         shell: bash
         run: |
