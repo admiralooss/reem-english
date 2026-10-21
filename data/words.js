@@ -52,4 +52,15 @@ window.REEM_WORDS=[
  {id:"pickup",categoryId:"errands",en:"pickup",ar:"استلام",pronunciation:"بِك أب",exampleEn:"Your order is ready for pickup.",exampleAr:"طلبك جاهز للاستلام.",image:"./assets/words/pickup.svg"},
  {id:"exchange",categoryId:"errands",en:"exchange",ar:"استبدال",pronunciation:"إكسچينج",exampleEn:"Can I exchange this size?",exampleAr:"هل يمكنني استبدال هذا المقاس؟",image:"./assets/words/exchange.svg"},
  {id:"confirm",categoryId:"errands",en:"confirm",ar:"يؤكد",pronunciation:"كَنفيرم",exampleEn:"Please confirm the appointment.",exampleAr:"يرجى تأكيد الموعد.",image:"./assets/words/confirm.svg"}
+,
+ {id:"cancel",categoryId:"errands",en:"cancel",ar:"يلغي",pronunciation:"كانسِل",exampleEn:"I need to cancel the appointment.",exampleAr:"أحتاج إلى إلغاء الموعد.",image:"./assets/words/cancel.svg"},
+ {id:"reschedule",categoryId:"errands",en:"reschedule",ar:"يعيد جدولة الموعد",pronunciation:"ري سْكَجول",exampleEn:"Can we reschedule for tomorrow?",exampleAr:"هل يمكننا إعادة الموعد إلى الغد؟",image:"./assets/words/reschedule.svg"},
+ {id:"location",categoryId:"errands",en:"location",ar:"موقع / مكان",pronunciation:"لوكيشن",exampleEn:"Send me your location.",exampleAr:"أرسل لي موقعك.",image:"./assets/words/location.svg"},
+ {id:"directions",categoryId:"errands",en:"directions",ar:"اتجاهات / إرشادات الطريق",pronunciation:"دِرِكشنز",exampleEn:"I need directions to the clinic.",exampleAr:"أحتاج إرشادات الطريق إلى العيادة.",image:"./assets/words/directions.svg"},
+ {id:"upstairs",categoryId:"errands",en:"upstairs",ar:"في الطابق العلوي",pronunciation:"أبستيرز",exampleEn:"The office is upstairs.",exampleAr:"المكتب في الطابق العلوي.",image:"./assets/words/upstairs.svg"},
+ {id:"downstairs",categoryId:"errands",en:"downstairs",ar:"في الطابق السفلي",pronunciation:"داونستيرز",exampleEn:"The pharmacy is downstairs.",exampleAr:"الصيدلية في الطابق السفلي.",image:"./assets/words/downstairs.svg"},
+ {id:"checkout",categoryId:"errands",en:"checkout",ar:"الدفع / إنهاء الشراء",pronunciation:"تشيك آوت",exampleEn:"Let's go to the checkout.",exampleAr:"لنذهب إلى مكان الدفع.",image:"./assets/words/checkout.svg"},
+ {id:"contactless",categoryId:"errands",en:"contactless",ar:"بدون تلامس",pronunciation:"كونتاكتلِس",exampleEn:"Can I pay contactless?",exampleAr:"هل يمكنني الدفع بدون تلامس؟",image:"./assets/words/contactless.svg"},
+ {id:"out-of-stock",categoryId:"errands",en:"out of stock",ar:"غير متوفر / نفد من المخزون",pronunciation:"آوت أُف ستوك",exampleEn:"This size is out of stock.",exampleAr:"هذا المقاس غير متوفر.",image:"./assets/words/out-of-stock.svg"},
+ {id:"return",categoryId:"errands",en:"return",ar:"يرجع / يعيد المنتج",pronunciation:"رِتِرن",exampleEn:"I want to return this item.",exampleAr:"أريد إعادة هذا المنتج.",image:"./assets/words/return.svg"}
 ];
