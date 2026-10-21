@@ -57,7 +57,8 @@ function lessonForCategory(categoryId,p=profile()){
     const intros=[
       "10 كلمات يومية أقوى شوي: الموعد، التوفر، الإيصال، الباقي، الطابور، الكاشير، المدخل، المخرج، المصعد والتقاطع.",
       "نكمل 10 كلمات من نفس العائلة: الزحمة، الطريق المختصر، الصيدلية، البقالة، ممر المتجر، المحفظة، الحجز، التوصيل، الاسترجاع ومزدحم.",
-      "درس اليوم جديد بالكامل: الجدول، كاونتر الخدمة، الشحنة، المواقف، العنوان، قريب، متأخر، الاستلام، الاستبدال والتأكيد."
+      "درس اليوم جديد بالكامل: الجدول، كاونتر الخدمة، الشحنة، المواقف، العنوان، قريب، متأخر، الاستلام، الاستبدال والتأكيد.",
+      "درس جديد: الإلغاء، إعادة الجدولة، الموقع، الاتجاهات، الطابق العلوي والسفلي، الدفع، الدفع بدون تلامس، نفاد المخزون وإرجاع المنتج."
     ];
     return {
       words,number:idx+1,total:sets.length,categoryId:"errands",categoryName:"عائلة المشاوير اليومية",icon:"🛍️",
@@ -130,7 +131,7 @@ function startStudy(index=0,categoryId){
     '<div class="audio-actions"><button class="normal" onclick="playWord(\''+esc(w.en)+'\',false)">🔊 عادي</button><button class="slow" onclick="playWord(\''+esc(w.en)+'\',true)">🐢 بطيء</button></div>'+
     '<div class="record-panel"><button id="recordBtn" class="record-main" onclick="toggleRecording(\''+esc(w.en)+'\')">🎙️ سجلي نطقك</button><div id="recordStatus" class="record-status">اسمعي الكلمة أول، ثم سجلي صوتك وقارنيه بالنطق الصحيح.</div><div id="recordPlayback"></div></div>'+
     '<div class="example-card"><b>'+esc(w.exampleEn)+'</b><small>'+esc(w.exampleAr)+'</small></div>'+
-    '<div class="word-actions"><button class="learned" onclick="markLearned(\''+w.id+'\','+i+',\''+lesson.categoryId+'\')">✓ حفظتها</button><button class="review" onclick="markReview(\''+w.id+'\','+i+',\''+lesson.categoryId+'\')">↻ راجعها</button><button onclick="nextWord('+i+',\''+lesson.categoryId+'\')">'+(i===words.length-1?"إنهاء اليوم":"التالي →")+'</button></div>'+
+    '<div class="word-actions"><button class="learned" onclick="markLearned(\''+w.id+'\','+i+',\''+lesson.categoryId+'\')">✓ حفظتها</button><button class="review" onclick="markReview(\''+w.id+'\','+i+',\''+lesson.categoryId+'\')">↻ راجعها</button><button onclick="nextWord('+i+',\''+lesson.categoryId+'\')">'+(i===words.length-1?(lesson.categoryId==="errands"&&lesson.number>=4?"اختبار خفيف →":"إنهاء اليوم"):"التالي →")+'</button></div>'+
     '</div></div></section></div></main>';
 }
 
@@ -191,7 +192,93 @@ function markLearned(id,i,categoryId){ReemStore.addLearned(id);startStudy(i,cate
 function markReview(id,i,categoryId){ReemStore.addReview(id);startStudy(i,categoryId)}
 function nextWord(i,categoryId){
   const lesson=lessonForCategory(categoryId,profile()),words=lesson.words;
-  if(i<words.length-1)startStudy(i+1,categoryId);else home();
+  if(i<words.length-1)return startStudy(i+1,categoryId);
+  if(categoryId==="errands"&&lesson.number>=4)return startLessonQuiz(categoryId);
+  home();
+}
+
+let __lessonQuiz=null;
+function lessonQuizShuffle(list){
+  const a=list.slice();
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}
+  return a;
+}
+function startLessonQuiz(categoryId="errands"){
+  applyPrefs();
+  if(window.ReemAudio)ReemAudio.stop();
+  const lesson=lessonForCategory(categoryId,profile());
+  const words=lesson.words.slice(0,10);
+  if(!words.length)return home();
+  const questions=lessonQuizShuffle(words).map((target,index)=>{
+    const distractors=lessonQuizShuffle(words.filter(w=>w.id!==target.id)).slice(0,3);
+    return {target,mode:index%2===0?"en-to-ar":"ar-to-en",options:lessonQuizShuffle([target,...distractors])};
+  });
+  __lessonQuiz={categoryId,lessonNumber:lesson.number,questions,index:0,score:0,answers:[],locked:false};
+  renderLessonQuiz();
+}
+function renderLessonQuiz(){
+  if(!__lessonQuiz)return startLessonQuiz();
+  const t=__lessonQuiz,q=t.questions[t.index],num=t.index+1,total=t.questions.length;
+  const prompt=q.mode==="en-to-ar"
+    ?'<h1>ما معنى <span dir="ltr">'+esc(q.target.en)+'</span>؟</h1><p>اختاري المعنى العربي الصحيح.</p>'
+    :'<h1>'+esc(q.target.ar)+'</h1><p>اختاري الكلمة الإنجليزية الصحيحة.</p>';
+  const options=q.options.map((w,i)=>{
+    const label=q.mode==="en-to-ar"?esc(w.ar):'<span dir="ltr">'+esc(w.en)+'</span>';
+    return '<button id="lessonQuizOpt'+i+'" onclick="answerLessonQuiz(\''+w.id+'\','+i+')"><b>'+label+'</b></button>';
+  }).join("");
+  APP.innerHTML='<main class="student-app"><div class="test-shell">'+
+    '<div class="test-top"><button class="back" onclick="home()">←</button><div><b>مراجعة خفيفة • الدرس '+t.lessonNumber+'</b><small>10 أسئلة بسيطة على كلمات اليوم</small></div><span class="eyebrow">'+num+' / '+total+'</span></div>'+
+    '<section class="test-card card"><div class="progress-track"><i style="width:'+(num/total*100)+'%"></i></div>'+
+    '<div class="test-question"><span class="test-icon">✨</span>'+prompt+
+    '<div class="test-options">'+options+'</div>'+
+    '<div id="lessonQuizFeedback" class="test-feedback"></div>'+
+    '<button id="lessonQuizNext" class="primary test-next" onclick="nextLessonQuiz()" disabled>'+(num===total?"النتيجة":"التالي →")+'</button>'+
+    '</div></section></div></main>';
+}
+function answerLessonQuiz(id,optionIndex){
+  if(!__lessonQuiz||__lessonQuiz.locked)return;
+  __lessonQuiz.locked=true;
+  const q=__lessonQuiz.questions[__lessonQuiz.index];
+  const correct=id===q.target.id;
+  if(correct)__lessonQuiz.score++;
+  __lessonQuiz.answers.push({wordId:q.target.id,selectedId:id,correct});
+  q.options.forEach((w,i)=>{
+    const b=document.getElementById("lessonQuizOpt"+i);
+    if(!b)return;
+    b.disabled=true;
+    if(w.id===q.target.id)b.classList.add("correct");
+    else if(i===optionIndex&&!correct)b.classList.add("wrong");
+  });
+  const f=document.getElementById("lessonQuizFeedback");
+  if(f)f.innerHTML=correct?'✅ <b>صحيحة</b>':'❌ الصحيح: <b dir="ltr">'+esc(q.target.en)+'</b> — '+esc(q.target.ar);
+  const n=document.getElementById("lessonQuizNext");if(n)n.disabled=false;
+}
+function nextLessonQuiz(){
+  if(!__lessonQuiz||!__lessonQuiz.locked)return;
+  if(__lessonQuiz.index<__lessonQuiz.questions.length-1){
+    __lessonQuiz.index++;__lessonQuiz.locked=false;renderLessonQuiz();
+  }else finishLessonQuiz();
+}
+function finishLessonQuiz(){
+  if(!__lessonQuiz)return;
+  const t=__lessonQuiz,total=t.questions.length,score=t.score,pct=Math.round(score/total*100);
+  const wrong=t.answers.filter(a=>!a.correct);
+  const subs=ReemStore.getSubmissions();
+  subs.push({
+    id:"lesson-practice-"+Date.now(),
+    type:"light-lesson-review",
+    title:"مراجعة خفيفة — عائلة المشاوير — الدرس "+t.lessonNumber,
+    score,total,percent:pct,answers:t.answers,submittedAt:new Date().toISOString()
+  });
+  ReemStore.saveSubmissions(subs);
+  const lesson=lessonForCategory(t.categoryId,profile());
+  APP.innerHTML='<main class="student-app"><div class="test-shell"><section class="test-card result-card card">'+
+    '<div class="result-ring"><strong>'+pct+'%</strong><span>'+score+' / '+total+'</span></div>'+
+    '<span class="eyebrow">✨ مراجعة خفيفة</span><h1>'+(pct>=80?"ممتاز، الكلمات ثابتة 👏":"جيد، نراجع كم كلمة ونثبتها")+'</h1>'+
+    '<p>هذه مراجعة بسيطة على كلمات درس اليوم، وليست اختبار المعلم الرسمي.</p>'+
+    (wrong.length?'<div class="wrong-review"><b>راجعي هذه الكلمات</b><div>'+wrong.map(a=>{const w=lesson.words.find(x=>x.id===a.wordId);return '<span dir="ltr">'+esc(w?w.en:a.wordId)+'</span>'}).join("")+'</div></div>':'<div class="test-feedback success">🏆 كل كلمات الدرس صحيحة!</div>')+
+    '<div class="result-actions"><button class="primary" onclick="startLessonQuiz(\''+t.categoryId+'\')">إعادة المراجعة</button><button class="ghost" onclick="home()">إنهاء الدرس</button></div>'+
+    '</section></div></main>';
 }
 
 let __morningTest=null;
