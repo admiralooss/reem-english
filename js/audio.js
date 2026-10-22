@@ -62,7 +62,17 @@ window.ReemAudio=(function(){
     "checkout":"checkout",
     "contactless":"contactless",
     "out of stock":"out-of-stock",
-    "return":"return"
+    "return":"return",
+    "actually":"actually",
+    "probably":"probably",
+    "anyway":"anyway",
+    "exactly":"exactly",
+    "seriously":"seriously",
+    "by the way":"by-the-way",
+    "no worries":"no-worries",
+    "hang on":"hang-on",
+    "sounds good":"sounds-good",
+    "i guess":"i-guess"
   };
 
   function clean(text){
@@ -110,7 +120,7 @@ window.ReemAudio=(function(){
     const key=wordMap[clean(text)];
     if(!key)return nativeSpeak(text,slow);
 
-    const src=new URL("./audio/words/"+key+(slow?"-slow":"")+".mp3?v=voice-errands4-1",document.baseURI).href;
+    const src=new URL("./audio/words/"+key+(slow?"-slow":"")+".mp3?v=voice-dailytalk1-1",document.baseURI).href;
     try{
       const a=new Audio();
       currentAudio=a;
