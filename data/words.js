@@ -63,4 +63,15 @@ window.REEM_WORDS=[
  {id:"contactless",categoryId:"errands",en:"contactless",ar:"بدون تلامس",pronunciation:"كونتاكتلِس",exampleEn:"Can I pay contactless?",exampleAr:"هل يمكنني الدفع بدون تلامس؟",image:"./assets/words/contactless.svg"},
  {id:"out-of-stock",categoryId:"errands",en:"out of stock",ar:"غير متوفر / نفد من المخزون",pronunciation:"آوت أُف ستوك",exampleEn:"This size is out of stock.",exampleAr:"هذا المقاس غير متوفر.",image:"./assets/words/out-of-stock.svg"},
  {id:"return",categoryId:"errands",en:"return",ar:"يرجع / يعيد المنتج",pronunciation:"رِتِرن",exampleEn:"I want to return this item.",exampleAr:"أريد إعادة هذا المنتج.",image:"./assets/words/return.svg"}
+,
+ {id:"actually",categoryId:"daily-talk",en:"actually",ar:"في الحقيقة / الصراحة",pronunciation:"آكتشُولي",exampleEn:"Actually, I changed my mind.",exampleAr:"في الحقيقة، غيرت رأيي.",image:"./assets/words/actually.svg"},
+ {id:"probably",categoryId:"daily-talk",en:"probably",ar:"غالبًا",pronunciation:"برابَبلي",exampleEn:"I will probably go later.",exampleAr:"غالبًا سأذهب لاحقًا.",image:"./assets/words/probably.svg"},
+ {id:"anyway",categoryId:"daily-talk",en:"anyway",ar:"على أي حال / المهم",pronunciation:"إني وِاي",exampleEn:"Anyway, let's go home.",exampleAr:"المهم، لنرجع للبيت.",image:"./assets/words/anyway.svg"},
+ {id:"exactly",categoryId:"daily-talk",en:"exactly",ar:"بالضبط",pronunciation:"إكزاكتلي",exampleEn:"Exactly! That's what I mean.",exampleAr:"بالضبط! هذا ما أقصده.",image:"./assets/words/exactly.svg"},
+ {id:"seriously",categoryId:"daily-talk",en:"seriously",ar:"بجد / بجدية",pronunciation:"سيريوسلي",exampleEn:"Seriously? Are you sure?",exampleAr:"بجد؟ هل أنت متأكد؟",image:"./assets/words/seriously.svg"},
+ {id:"by-the-way",categoryId:"daily-talk",en:"by the way",ar:"على فكرة",pronunciation:"باي ذا وِاي",exampleEn:"By the way, I saw Sara today.",exampleAr:"على فكرة، رأيت سارة اليوم.",image:"./assets/words/by-the-way.svg"},
+ {id:"no-worries",categoryId:"daily-talk",en:"no worries",ar:"ولا يهمك / لا تشيل هم",pronunciation:"نو وِريز",exampleEn:"No worries, it's okay.",exampleAr:"ولا يهمك، عادي.",image:"./assets/words/no-worries.svg"},
+ {id:"hang-on",categoryId:"daily-talk",en:"hang on",ar:"انتظر شوي",pronunciation:"هانغ أون",exampleEn:"Hang on, I'm coming.",exampleAr:"انتظر شوي، أنا جاي.",image:"./assets/words/hang-on.svg"},
+ {id:"sounds-good",categoryId:"daily-talk",en:"sounds good",ar:"تمام / يبدو مناسب",pronunciation:"ساوندز قود",exampleEn:"Seven o'clock? Sounds good.",exampleAr:"الساعة سبعة؟ تمام.",image:"./assets/words/sounds-good.svg"},
+ {id:"i-guess",categoryId:"daily-talk",en:"I guess",ar:"أعتقد / يمكن",pronunciation:"آي قِس",exampleEn:"I guess we can try.",exampleAr:"أعتقد أننا نقدر نجرب.",image:"./assets/words/i-guess.svg"}
 ];
