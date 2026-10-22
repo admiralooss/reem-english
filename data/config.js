@@ -13,8 +13,9 @@ window.REEM_CONFIG={
   categories:[
     {id:"morning",nameAr:"عائلة الصباح",nameEn:"Morning",icon:"☀️",order:1},
     {id:"errands",nameAr:"عائلة المشاوير اليومية",nameEn:"Daily Errands",icon:"🛍️",order:2},
-    {id:"home",nameAr:"عائلة البيت",nameEn:"Home",icon:"🏠",order:3},
-    {id:"kitchen",nameAr:"عائلة المطبخ",nameEn:"Kitchen",icon:"🍽️",order:4},
-    {id:"work",nameAr:"عائلة الدوام",nameEn:"Work",icon:"💼",order:5}
+    {id:"daily-talk",nameAr:"عائلة الكلام اليومي",nameEn:"Daily Talk",icon:"💬",order:3},
+    {id:"home",nameAr:"عائلة البيت",nameEn:"Home",icon:"🏠",order:4},
+    {id:"kitchen",nameAr:"عائلة المطبخ",nameEn:"Kitchen",icon:"🍽️",order:5},
+    {id:"work",nameAr:"عائلة الدوام",nameEn:"Work",icon:"💼",order:6}
   ]
 };
