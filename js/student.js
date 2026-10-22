@@ -66,13 +66,23 @@ function lessonForCategory(categoryId,p=profile()){
       intro:intros[idx]||"10 كلمات جديدة من نفس عائلة المشاوير اليومية."
     };
   }
+  if(categoryId==="daily-talk"){
+    const words=(content().words||[]).filter(w=>w.categoryId==="daily-talk").slice(0,10);
+    return {
+      words,number:1,total:1,categoryId:"daily-talk",categoryName:"عائلة الكلام اليومي",icon:"💬",
+      label:"الدرس 1",
+      intro:"10 كلمات وعبارات من الكلام اليومي الحقيقي: في الحقيقة، غالبًا، المهم، بالضبط، بجد، على فكرة، ولا يهمك، انتظر شوي، تمام، وأعتقد."
+    };
+  }
   return {words:[],number:1,total:0,categoryId:categoryId||"",categoryName:"الدرس",icon:"📚",label:"درس",intro:""};
 }
 function activeLesson(p=profile()){
+  const dailyTalk=(content().words||[]).filter(w=>w.categoryId==="daily-talk");
+  if(dailyTalk.length)return lessonForCategory("daily-talk",p);
   const morning=(content().words||[]).filter(w=>w.categoryId==="morning").slice(0,20);
   const morningDone=morning.length>=20 && morning.every(w=>p.learnedWordIds.includes(w.id));
   if(!morningDone)return lessonForCategory("morning",p);
-  const errands=(content().words||[]).filter(w=>w.categoryId==="errands").slice(0,20);
+  const errands=(content().words||[]).filter(w=>w.categoryId==="errands");
   if(errands.length)return lessonForCategory("errands",p);
   return lessonForCategory("morning",p);
 }
@@ -193,7 +203,7 @@ function markReview(id,i,categoryId){ReemStore.addReview(id);startStudy(i,catego
 function nextWord(i,categoryId){
   const lesson=lessonForCategory(categoryId,profile()),words=lesson.words;
   if(i<words.length-1)return startStudy(i+1,categoryId);
-  if(categoryId==="errands"&&lesson.number>=4)return startLessonQuiz(categoryId);
+  if((categoryId==="errands"&&lesson.number>=4)||categoryId==="daily-talk")return startLessonQuiz(categoryId);
   home();
 }
 
@@ -267,7 +277,7 @@ function finishLessonQuiz(){
   subs.push({
     id:"lesson-practice-"+Date.now(),
     type:"light-lesson-review",
-    title:"مراجعة خفيفة — عائلة المشاوير — الدرس "+t.lessonNumber,
+    title:"مراجعة خفيفة — "+lessonForCategory(t.categoryId,profile()).categoryName+" — الدرس "+t.lessonNumber,
     score,total,percent:pct,answers:t.answers,submittedAt:new Date().toISOString()
   });
   ReemStore.saveSubmissions(subs);
