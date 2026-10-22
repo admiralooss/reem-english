@@ -90,6 +90,17 @@ jobs:
           make_audio "out-of-stock" "out of stock"
           make_audio "return" "return"
 
+          make_audio "actually" "actually"
+          make_audio "probably" "probably"
+          make_audio "anyway" "anyway"
+          make_audio "exactly" "exactly"
+          make_audio "seriously" "seriously"
+          make_audio "by-the-way" "by the way"
+          make_audio "no-worries" "no worries"
+          make_audio "hang-on" "hang on"
+          make_audio "sounds-good" "sounds good"
+          make_audio "i-guess" "I guess"
+
       - name: Commit generated audio
         shell: bash
         run: |
