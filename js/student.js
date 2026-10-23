@@ -219,7 +219,15 @@ async function finishRecording(target){
   }
 }
 
-function markLearned(id,i,categoryId){ReemStore.addLearned(id);startStudy(i,categoryId)}
+function markLearned(id,i,categoryId){
+  ReemStore.addLearned(id);
+  const lesson=categoryId==="errands"?latestErrandsLesson(profile()):lessonForCategory(categoryId,profile());
+  const status=recentTestStatus(profile());
+  if(status.ready && (categoryId==="errands"||categoryId==="daily-talk") && i>=lesson.words.length-1){
+    return startRecentCombinedTest();
+  }
+  startStudy(i,categoryId);
+}
 function markReview(id,i,categoryId){ReemStore.addReview(id);startStudy(i,categoryId)}
 function nextWord(i,categoryId){
   const lesson=categoryId==="errands"?latestErrandsLesson(profile()):lessonForCategory(categoryId,profile()),words=lesson.words;
