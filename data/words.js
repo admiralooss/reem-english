@@ -81,7 +81,7 @@ window.REEM_WORDS=[
  {id:"supposed-to",categoryId:"daily-life-2510",en:"supposed to",ar:"المفروض أن / من المفترض",pronunciation:"سَبوزد تو",exampleEn:"I'm supposed to be there at eight.",exampleAr:"المفروض أكون هناك الساعة ثمانية.",image:"./assets/words/supposed-to.svg"},
  {id:"figure-out",categoryId:"daily-life-2510",en:"figure out",ar:"يفهم / يجد الحل",pronunciation:"فِقَر آوت",exampleEn:"I'll figure it out.",exampleAr:"سأفهمها وأجد الحل.",image:"./assets/words/figure-out.svg"},
  {id:"depends",categoryId:"daily-life-2510",en:"depends",ar:"يعتمد / على حسب",pronunciation:"دِبِندز",exampleEn:"It depends on the time.",exampleAr:"يعتمد على الوقت.",image:"./assets/words/depends.svg"},
- {id:"bother",categoryId:"daily-life-2510",en:"bother",ar:"يزعج / يضايق",pronunciation:"باذَر",exampleEn:"Sorry to bother you.",exampleAr:"آسف على إزعاجك.",image:"./assets/words/bother.svg"},
+ {id:"bother",categoryId:"daily-life-2510",en:"bother",ar:"يزعج / يضايق",pronunciation:"باذَر",exampleEn:"Sorry to bother you.",exampleAr:"آسف على إزعاجك.",image:"./assets/words/seriously.svg"},
  {id:"realize",categoryId:"daily-life-2510",en:"realize",ar:"يدرك / ينتبه",pronunciation:"ريالايز",exampleEn:"I didn't realize it was late.",exampleAr:"ما انتبهت أن الوقت تأخر.",image:"./assets/words/realize.svg"},
  {id:"prefer",categoryId:"daily-life-2510",en:"prefer",ar:"يفضّل",pronunciation:"برِفِر",exampleEn:"I prefer this one.",exampleAr:"أنا أفضل هذا.",image:"./assets/words/prefer.svg"},
  {id:"manage",categoryId:"daily-life-2510",en:"manage",ar:"يتمكن / يدبّر الأمر",pronunciation:"مانِج",exampleEn:"Don't worry, I'll manage.",exampleAr:"لا تشيل هم، سأدبّرها.",image:"./assets/words/manage.svg"}
