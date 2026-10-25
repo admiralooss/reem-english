@@ -74,4 +74,15 @@ window.REEM_WORDS=[
  {id:"hang-on",categoryId:"daily-talk",en:"hang on",ar:"انتظر شوي",pronunciation:"هانغ أون",exampleEn:"Hang on, I'm coming.",exampleAr:"انتظر شوي، أنا جاي.",image:"./assets/words/hang-on.svg"},
  {id:"sounds-good",categoryId:"daily-talk",en:"sounds good",ar:"تمام / يبدو مناسب",pronunciation:"ساوندز قود",exampleEn:"Seven o'clock? Sounds good.",exampleAr:"الساعة سبعة؟ تمام.",image:"./assets/words/sounds-good.svg"},
  {id:"i-guess",categoryId:"daily-talk",en:"I guess",ar:"أعتقد / يمكن",pronunciation:"آي قِس",exampleEn:"I guess we can try.",exampleAr:"أعتقد أننا نقدر نجرب.",image:"./assets/words/i-guess.svg"}
+,
+ {id:"instead",categoryId:"daily-life-2510",en:"instead",ar:"بدلًا من ذلك / بداله",pronunciation:"إنستِد",exampleEn:"Let's stay home instead.",exampleAr:"خلّنا نجلس في البيت بدلًا من ذلك.",image:"./assets/words/instead.svg"},
+ {id:"unless",categoryId:"daily-life-2510",en:"unless",ar:"إلا إذا",pronunciation:"أَنلِس",exampleEn:"I won't go unless you come.",exampleAr:"لن أذهب إلا إذا جئت.",image:"./assets/words/unless.svg"},
+ {id:"enough",categoryId:"daily-life-2510",en:"enough",ar:"كفاية / بما يكفي",pronunciation:"إناف",exampleEn:"I think we have enough.",exampleAr:"أعتقد أن عندنا ما يكفي.",image:"./assets/words/enough.svg"},
+ {id:"supposed-to",categoryId:"daily-life-2510",en:"supposed to",ar:"المفروض أن / من المفترض",pronunciation:"سَبوزد تو",exampleEn:"I'm supposed to be there at eight.",exampleAr:"المفروض أكون هناك الساعة ثمانية.",image:"./assets/words/supposed-to.svg"},
+ {id:"figure-out",categoryId:"daily-life-2510",en:"figure out",ar:"يفهم / يجد الحل",pronunciation:"فِقَر آوت",exampleEn:"I'll figure it out.",exampleAr:"سأفهمها وأجد الحل.",image:"./assets/words/figure-out.svg"},
+ {id:"depends",categoryId:"daily-life-2510",en:"depends",ar:"يعتمد / على حسب",pronunciation:"دِبِندز",exampleEn:"It depends on the time.",exampleAr:"يعتمد على الوقت.",image:"./assets/words/depends.svg"},
+ {id:"bother",categoryId:"daily-life-2510",en:"bother",ar:"يزعج / يضايق",pronunciation:"باذَر",exampleEn:"Sorry to bother you.",exampleAr:"آسف على إزعاجك.",image:"./assets/words/bother.svg"},
+ {id:"realize",categoryId:"daily-life-2510",en:"realize",ar:"يدرك / ينتبه",pronunciation:"ريالايز",exampleEn:"I didn't realize it was late.",exampleAr:"ما انتبهت أن الوقت تأخر.",image:"./assets/words/realize.svg"},
+ {id:"prefer",categoryId:"daily-life-2510",en:"prefer",ar:"يفضّل",pronunciation:"برِفِر",exampleEn:"I prefer this one.",exampleAr:"أنا أفضل هذا.",image:"./assets/words/prefer.svg"},
+ {id:"manage",categoryId:"daily-life-2510",en:"manage",ar:"يتمكن / يدبّر الأمر",pronunciation:"مانِج",exampleEn:"Don't worry, I'll manage.",exampleAr:"لا تشيل هم، سأدبّرها.",image:"./assets/words/manage.svg"}
 ];
