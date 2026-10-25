@@ -74,6 +74,7 @@ function lessonForCategory(categoryId,p=profile()){
       intro:"10 كلمات وعبارات من الكلام اليومي الحقيقي: في الحقيقة، غالبًا، المهم، بالضبط، بجد، على فكرة، ولا يهمك، انتظر شوي، تمام، وأعتقد."
     };
   }
+  if(categoryId==="daily-life-2510"){ const words=(content().words||[]).filter(w=>w.categoryId==="daily-life-2510").slice(0,10); return {words,number:1,total:1,categoryId:"daily-life-2510",categoryName:"الحياة اليومية — 25/10",icon:"🌆",label:"درس 25/10",intro:"10 كلمات وعبارات يومية بمستوى متوسط إلى أصعب شوي."}; }
   return {words:[],number:1,total:0,categoryId:categoryId||"",categoryName:"الدرس",icon:"📚",label:"درس",intro:""};
 }
 const RECENT_TEST_ERRANDS_IDS=["cancel","reschedule","location","directions","upstairs","downstairs","checkout","contactless","out-of-stock","return"];
@@ -96,6 +97,7 @@ function latestErrandsLesson(p=profile()){
 }
 
 function activeLesson(p=profile()){
+  const today2510=lessonForCategory("daily-life-2510",p); if(today2510.words.length)return today2510;
   const recent=recentTestStatus(p);
   const errands=latestErrandsLesson(p);
   if(errands.words.some(w=>!p.learnedWordIds.includes(w.id)))return errands;
