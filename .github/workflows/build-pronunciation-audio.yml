@@ -101,6 +101,17 @@ jobs:
           make_audio "sounds-good" "sounds good"
           make_audio "i-guess" "I guess"
 
+          make_audio "instead" "instead"
+          make_audio "unless" "unless"
+          make_audio "enough" "enough"
+          make_audio "supposed-to" "supposed to"
+          make_audio "figure-out" "figure out"
+          make_audio "depends" "depends"
+          make_audio "bother" "bother"
+          make_audio "realize" "realize"
+          make_audio "prefer" "prefer"
+          make_audio "manage" "manage"
+
       - name: Commit generated audio
         shell: bash
         run: |
