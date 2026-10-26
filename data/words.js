@@ -85,4 +85,15 @@ window.REEM_WORDS=[
  {id:"realize",categoryId:"daily-life-2510",en:"realize",ar:"يدرك / ينتبه",pronunciation:"ريالايز",exampleEn:"I didn't realize it was late.",exampleAr:"ما انتبهت أن الوقت تأخر.",image:"./assets/words/realize.svg"},
  {id:"prefer",categoryId:"daily-life-2510",en:"prefer",ar:"يفضّل",pronunciation:"برِفِر",exampleEn:"I prefer this one.",exampleAr:"أنا أفضل هذا.",image:"./assets/words/prefer.svg"},
  {id:"manage",categoryId:"daily-life-2510",en:"manage",ar:"يتمكن / يدبّر الأمر",pronunciation:"مانِج",exampleEn:"Don't worry, I'll manage.",exampleAr:"لا تشيل هم، سأدبّرها.",image:"./assets/words/manage.svg"}
+,
+ {id:"although",categoryId:"daily-life-2610",en:"although",ar:"مع أن / رغم أن",pronunciation:"أولذو",exampleEn:"Although I'm tired, I'll go.",exampleAr:"مع أني تعبان، سأذهب.",image:"./assets/words/although.svg"},
+ {id:"somehow",categoryId:"daily-life-2610",en:"somehow",ar:"بطريقة ما",pronunciation:"سَم هاو",exampleEn:"Somehow, I found my keys.",exampleAr:"بطريقة ما، لقيت مفاتيحي.",image:"./assets/words/somehow.svg"},
+ {id:"otherwise",categoryId:"daily-life-2610",en:"otherwise",ar:"وإلا / غير كذا",pronunciation:"أذَر وايز",exampleEn:"Hurry up, otherwise we'll be late.",exampleAr:"استعجل، وإلا سنتأخر.",image:"./assets/words/otherwise.svg"},
+ {id:"apparently",categoryId:"daily-life-2610",en:"apparently",ar:"على ما يبدو",pronunciation:"أبارَنتلي",exampleEn:"Apparently, the store is closed.",exampleAr:"على ما يبدو، المحل مقفل.",image:"./assets/words/apparently.svg"},
+ {id:"eventually",categoryId:"daily-life-2610",en:"eventually",ar:"في النهاية",pronunciation:"إڤِنتشُولي",exampleEn:"We'll get there eventually.",exampleAr:"بنوصل هناك في النهاية.",image:"./assets/words/eventually.svg"},
+ {id:"afford",categoryId:"daily-life-2610",en:"afford",ar:"يقدر على التكلفة",pronunciation:"أفورد",exampleEn:"I can't afford it right now.",exampleAr:"ما أقدر على تكلفته الآن.",image:"./assets/words/afford.svg"},
+ {id:"remind",categoryId:"daily-life-2610",en:"remind",ar:"يذكّر",pronunciation:"رِمايند",exampleEn:"Remind me later, please.",exampleAr:"ذكرني لاحقًا، لو سمحت.",image:"./assets/words/remind.svg"},
+ {id:"expect",categoryId:"daily-life-2610",en:"expect",ar:"يتوقع",pronunciation:"إكسبِكت",exampleEn:"I didn't expect that.",exampleAr:"ما توقعت هذا.",image:"./assets/words/expect.svg"},
+ {id:"avoid",categoryId:"daily-life-2610",en:"avoid",ar:"يتجنب",pronunciation:"أڤويد",exampleEn:"Try to avoid the traffic.",exampleAr:"حاول تتجنب الزحمة.",image:"./assets/words/avoid.svg"},
+ {id:"worth-it",categoryId:"daily-life-2610",en:"worth it",ar:"يستاهل / يستحق",pronunciation:"وِرث إت",exampleEn:"It's expensive, but it's worth it.",exampleAr:"غالي، لكنه يستاهل.",image:"./assets/words/worth-it.svg"}
 ];
