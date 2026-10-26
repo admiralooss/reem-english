@@ -112,6 +112,17 @@ jobs:
           make_audio "prefer" "prefer"
           make_audio "manage" "manage"
 
+          make_audio "although" "although"
+          make_audio "somehow" "somehow"
+          make_audio "otherwise" "otherwise"
+          make_audio "apparently" "apparently"
+          make_audio "eventually" "eventually"
+          make_audio "afford" "afford"
+          make_audio "remind" "remind"
+          make_audio "expect" "expect"
+          make_audio "avoid" "avoid"
+          make_audio "worth-it" "worth it"
+
       - name: Commit generated audio
         shell: bash
         run: |
