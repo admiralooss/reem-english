@@ -82,7 +82,17 @@ window.ReemAudio=(function(){
     "bother":"bother",
     "realize":"realize",
     "prefer":"prefer",
-    "manage":"manage"
+    "manage":"manage",
+    "although":"although",
+    "somehow":"somehow",
+    "otherwise":"otherwise",
+    "apparently":"apparently",
+    "eventually":"eventually",
+    "afford":"afford",
+    "remind":"remind",
+    "expect":"expect",
+    "avoid":"avoid",
+    "worth it":"worth-it"
   };
 
   function clean(text){
@@ -130,7 +140,7 @@ window.ReemAudio=(function(){
     const key=wordMap[clean(text)];
     if(!key)return nativeSpeak(text,slow);
 
-    const src=new URL("./audio/words/"+key+(slow?"-slow":"")+".mp3?v=voice-2510-1",document.baseURI).href;
+    const src=new URL("./audio/words/"+key+(slow?"-slow":"")+".mp3?v=voice-2610-1",document.baseURI).href;
     try{
       const a=new Audio();
       currentAudio=a;
