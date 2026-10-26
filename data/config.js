@@ -17,6 +17,7 @@ window.REEM_CONFIG={
     {id:"daily-life-2510",nameAr:"الحياة اليومية — 25/10",nameEn:"Daily Life — 25/10",icon:"🌆",order:4},
     {id:"home",nameAr:"عائلة البيت",nameEn:"Home",icon:"🏠",order:5},
     {id:"kitchen",nameAr:"عائلة المطبخ",nameEn:"Kitchen",icon:"🍽️",order:6},
-    {id:"work",nameAr:"عائلة الدوام",nameEn:"Work",icon:"💼",order:7}
+    {id:"work",nameAr:"عائلة الدوام",nameEn:"Work",icon:"💼",order:7},
+    {id:"daily-life-2610",nameAr:"درس 26/10",nameEn:"Daily Life 26/10",icon:"✨",order:8}
   ]
 };
