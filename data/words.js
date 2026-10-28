@@ -96,4 +96,15 @@ window.REEM_WORDS=[
  {id:"expect",categoryId:"daily-life-2610",en:"expect",ar:"يتوقع",pronunciation:"إكسبِكت",exampleEn:"I didn't expect that.",exampleAr:"ما توقعت هذا.",image:"./assets/words/expect.svg"},
  {id:"avoid",categoryId:"daily-life-2610",en:"avoid",ar:"يتجنب",pronunciation:"أڤويد",exampleEn:"Try to avoid the traffic.",exampleAr:"حاول تتجنب الزحمة.",image:"./assets/words/avoid.svg"},
  {id:"worth-it",categoryId:"daily-life-2610",en:"worth it",ar:"يستاهل / يستحق",pronunciation:"وِرث إت",exampleEn:"It's expensive, but it's worth it.",exampleAr:"غالي، لكنه يستاهل.",image:"./assets/words/worth-it.svg"}
+,
+ {id:"knife",categoryId:"kitchen",lessonDate:"28/10",en:"knife",ar:"سكين",pronunciation:"نايف",silentLetter:"k",exampleEn:"Use a knife to cut it.",exampleAr:"استخدم السكين لتقطيعه.",image:"./assets/words/knife.svg"},
+ {id:"knee",categoryId:"daily-talk",lessonDate:"28/10",en:"knee",ar:"ركبة",pronunciation:"ني",silentLetter:"k",exampleEn:"My knee feels better today.",exampleAr:"ركبتي أفضل اليوم.",image:"./assets/words/knee.svg"},
+ {id:"wrist",categoryId:"daily-talk",lessonDate:"28/10",en:"wrist",ar:"معصم",pronunciation:"رِست",silentLetter:"w",exampleEn:"My wrist feels better today.",exampleAr:"معصمي أفضل اليوم.",image:"./assets/words/wrist.svg"},
+ {id:"honest",categoryId:"daily-talk",lessonDate:"28/10",en:"honest",ar:"صادق / صريحة",pronunciation:"آنِست",silentLetter:"h",exampleEn:"Please be honest with me.",exampleAr:"كن صريحًا معي من فضلك.",image:"./assets/words/honest.svg"},
+ {id:"hour",categoryId:"daily-talk",lessonDate:"28/10",en:"hour",ar:"ساعة",pronunciation:"آوَر",silentLetter:"h",exampleEn:"I'll be there in an hour.",exampleAr:"سأكون هناك خلال ساعة.",image:"./assets/words/hour.svg"},
+ {id:"receipt-silent",categoryId:"errands",lessonDate:"28/10",en:"receipt",ar:"إيصال",pronunciation:"رِسيت",silentLetter:"p",exampleEn:"Keep the receipt with you.",exampleAr:"احتفظ بالإيصال معك.",image:"./assets/words/receipt.svg"},
+ {id:"aisle-silent",categoryId:"errands",lessonDate:"28/10",en:"aisle",ar:"ممر المتجر",pronunciation:"آيل",silentLetter:"s",exampleEn:"It's in the next aisle.",exampleAr:"هو في الممر التالي.",image:"./assets/words/aisle.svg"},
+ {id:"answer",categoryId:"work",lessonDate:"28/10",en:"answer",ar:"إجابة / يجيب",pronunciation:"آنسَر",silentLetter:"w",exampleEn:"I know the answer.",exampleAr:"أنا أعرف الإجابة.",image:"./assets/words/answer.svg"},
+ {id:"listen",categoryId:"daily-talk",lessonDate:"28/10",en:"listen",ar:"يستمع",pronunciation:"لِسِن",silentLetter:"t",exampleEn:"Listen for a second.",exampleAr:"استمع للحظة.",image:"./assets/words/listen.svg"},
+ {id:"often",categoryId:"daily-talk",lessonDate:"28/10",en:"often",ar:"غالبًا / كثيرًا",pronunciation:"أوفِن",silentLetter:"t",exampleEn:"I often drink coffee in the morning.",exampleAr:"غالبًا أشرب القهوة في الصباح.",image:"./assets/words/often.svg"}
 ];
