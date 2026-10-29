@@ -76,11 +76,15 @@ function lessonForCategory(categoryId,p=profile()){
   }
   if(categoryId==="daily-life-2510"){ const words=(content().words||[]).filter(w=>w.categoryId==="daily-life-2510").slice(0,10); return {words,number:1,total:1,categoryId:"daily-life-2510",categoryName:"الحياة اليومية — 25/10",icon:"🌆",label:"درس 25/10",intro:"10 كلمات وعبارات يومية بمستوى متوسط إلى أصعب شوي."}; }
   if(categoryId==="daily-life-2610"){ const words=(content().words||[]).filter(w=>w.categoryId==="daily-life-2610").slice(0,10); return {words,number:1,total:1,categoryId:"daily-life-2610",categoryName:"درس 26/10",icon:"✨",label:"درس 26/10",intro:"10 كلمات يومية جديدة بمستوى فوق المتوسط بشكل خفيف."}; }
+  if(categoryId==="today-2810"){
+    const words=(content().words||[]).filter(w=>w.lessonDate==="28/10").slice(0,10);
+    return {words,number:1,total:1,categoryId:"today-2810",categoryName:"درس الحروف الصامتة",icon:"🔤",label:"درس 28/10",intro:"10 كلمات موزعة على العوائل، والتركيز على الحروف المكتوبة التي لا تُنطق."};
+  }
   return {words:[],number:1,total:0,categoryId:categoryId||"",categoryName:"الدرس",icon:"📚",label:"درس",intro:""};
 }
-const RECENT_TEST_ERRANDS_IDS=["cancel","reschedule","location","directions","upstairs","downstairs","checkout","contactless","out-of-stock","return"];
-const RECENT_TEST_DAILY_TALK_IDS=["actually","probably","anyway","exactly","seriously","by-the-way","no-worries","hang-on","sounds-good","i-guess"];
-const RECENT_TEST_IDS=[...RECENT_TEST_ERRANDS_IDS,...RECENT_TEST_DAILY_TALK_IDS];
+const RECENT_TEST_2610_IDS=["although","somehow","otherwise","apparently","eventually","afford","remind","expect","avoid","worth-it"];
+const RECENT_TEST_2810_IDS=["knife","knee","wrist","honest","hour","receipt-silent","aisle-silent","answer","listen","often"];
+const RECENT_TEST_IDS=[...RECENT_TEST_2610_IDS,...RECENT_TEST_2810_IDS];
 
 function recentTestWords(){
   const byId=Object.fromEntries((content().words||[]).map(w=>[w.id,w]));
@@ -98,6 +102,7 @@ function latestErrandsLesson(p=profile()){
 }
 
 function activeLesson(p=profile()){
+  const today2810=lessonForCategory("today-2810",p); if(today2810.words.length)return today2810;
   const today2610=lessonForCategory("daily-life-2610",p); if(today2610.words.length)return today2610;
   const today2510=lessonForCategory("daily-life-2510",p); if(today2510.words.length)return today2510;
   const recent=recentTestStatus(p);
@@ -134,7 +139,7 @@ function home(){
   const p=profile(),c=content(),prog=courseProgress(p),left=Math.max(0,100-prog),lesson=activeLesson(p),today=lesson.words,recentTest=recentTestStatus(p);
   shell(
     '<div class="topbar"><div class="welcome"><span class="eyebrow">✨ '+ordinalDay(dayNumber(p))+'</span><h1>أهلاً وسهلاً بك يا '+esc(p.name)+'</h1><p>كل يوم كلمات عملية من الحياة اليومية، بصور ونطق وجملة واضحة.</p></div>'+topSummary(p)+'</div>'+
-    '<div class="layout"><section class="hero card"><div class="hero-content"><span class="eyebrow">'+lesson.icon+' '+lesson.label+' • '+lesson.categoryName+'</span><h2>'+lesson.words.length+' كلمة جديدة</h2><p>'+lesson.intro+'</p><div class="hero-actions"><button class="primary" onclick="startStudy(0,\''+lesson.categoryId+'\')">ابدئي كلمات اليوم ▶</button>'+(recentTest.ready?'<button class="secondary" onclick="startRecentCombinedTest()">📝 اختبار آخر درسين — 20 كلمة</button>':'<button class="secondary" disabled>🔒 اختبار آخر درسين — '+recentTest.done+'/'+recentTest.total+' مكتملة</button>')+'<button class="ghost" onclick="wordsPage()">شوفي الكلمات كلها</button></div><div class="progress-block"><div class="progress-label"><span>التقدم الكلي</span><b>'+prog+'% • المتبقي '+left+'%</b></div><div class="progress-track"><i style="width:'+prog+'%"></i></div></div></div></section>'+
+    '<div class="layout"><section class="hero card"><div class="hero-content"><span class="eyebrow">'+lesson.icon+' '+lesson.label+' • '+lesson.categoryName+'</span><h2>'+lesson.words.length+' كلمة جديدة</h2><p>'+lesson.intro+'</p><div class="hero-actions"><button class="primary" onclick="startStudy(0,\''+lesson.categoryId+'\')">ابدئي كلمات اليوم ▶</button>'+(recentTest.ready?'<button class="secondary" onclick="startRecentCombinedTest()">🧭 تحدّي آخر درسين — 4 مراحل</button>':'<button class="secondary" disabled>🔒 تحدّي آخر درسين — '+recentTest.done+'/'+recentTest.total+' مكتملة</button>')+'<button class="ghost" onclick="wordsPage()">شوفي الكلمات كلها</button></div><div class="progress-block"><div class="progress-label"><span>التقدم الكلي</span><b>'+prog+'% • المتبقي '+left+'%</b></div><div class="progress-track"><i style="width:'+prog+'%"></i></div></div></div></section>'+
     '<aside class="side-stack"><section class="today card"><div class="section-head"><h3>كلمات اليوم</h3><small>'+today.length+' كلمات</small></div><div class="today-list">'+today.slice(0,6).map(w=>miniWord(w,p)).join("")+'</div></section><section class="today card"><div class="section-head"><h3>المستوى الحالي</h3><small>'+currentLevel(p).nameEn+'</small></div><div class="progress-block"><div class="progress-label"><span>'+currentLevel(p).nameAr+'</span><b>'+levelProgress(p)+'%</b></div><div class="progress-track"><i style="width:'+levelProgress(p)+'%"></i></div></div><p style="color:var(--muted);font-size:.78rem;line-height:1.7;margin:12px 0 0">الانتقال للمستوى التالي يعتمد على النقاط والاختبارات التي يحددها المعلم.</p></section></aside></div>'+
     '<section class="categories card"><div class="section-head"><h3>عائلات الكلمات</h3><small>يمكن للمعلم إضافة فئات جديدة</small></div><div class="category-grid">'+(c.categories||[]).map(cat=>categoryCard(cat,c.words)).join("")+'</div></section>'
   ,"home");
