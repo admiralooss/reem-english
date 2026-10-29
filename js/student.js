@@ -139,7 +139,7 @@ function home(){
   const p=profile(),c=content(),prog=courseProgress(p),left=Math.max(0,100-prog),lesson=activeLesson(p),today=lesson.words,recentTest=recentTestStatus(p);
   shell(
     '<div class="topbar"><div class="welcome"><span class="eyebrow">✨ '+ordinalDay(dayNumber(p))+'</span><h1>أهلاً وسهلاً بك يا '+esc(p.name)+'</h1><p>كل يوم كلمات عملية من الحياة اليومية، بصور ونطق وجملة واضحة.</p></div>'+topSummary(p)+'</div>'+
-    '<div class="layout"><section class="hero card"><div class="hero-content"><span class="eyebrow">'+lesson.icon+' '+lesson.label+' • '+lesson.categoryName+'</span><h2>'+lesson.words.length+' كلمة جديدة</h2><p>'+lesson.intro+'</p><div class="hero-actions"><button class="primary" onclick="startStudy(0,\''+lesson.categoryId+'\')">ابدئي كلمات اليوم ▶</button>'+(recentTest.ready?'<button class="secondary" onclick="startRecentCombinedTest()">🧭 تحدّي آخر درسين — 4 مراحل</button>':'<button class="secondary" disabled>🔒 تحدّي آخر درسين — '+recentTest.done+'/'+recentTest.total+' مكتملة</button>')+'<button class="ghost" onclick="wordsPage()">شوفي الكلمات كلها</button></div><div class="progress-block"><div class="progress-label"><span>التقدم الكلي</span><b>'+prog+'% • المتبقي '+left+'%</b></div><div class="progress-track"><i style="width:'+prog+'%"></i></div></div></div></section>'+
+    '<div class="layout"><section class="hero card"><div class="hero-content"><span class="eyebrow">'+lesson.icon+' '+lesson.label+' • '+lesson.categoryName+'</span><h2>'+lesson.words.length+' كلمة جديدة</h2><p>'+lesson.intro+'</p><div class="hero-actions"><button class="primary" onclick="startStudy(0,\''+lesson.categoryId+'\')">ابدئي كلمات اليوم ▶</button>'+(recentTest.ready?'<button class="secondary" onclick="startRecentCombinedTest()">📝 اختبار آخر درسين — 20 كلمة</button>':'<button class="secondary" disabled>🔒 اختبار آخر درسين — '+recentTest.done+'/'+recentTest.total+' مكتملة</button>')+'<button class="ghost" onclick="wordsPage()">شوفي الكلمات كلها</button></div><div class="progress-block"><div class="progress-label"><span>التقدم الكلي</span><b>'+prog+'% • المتبقي '+left+'%</b></div><div class="progress-track"><i style="width:'+prog+'%"></i></div></div></div></section>'+
     '<aside class="side-stack"><section class="today card"><div class="section-head"><h3>كلمات اليوم</h3><small>'+today.length+' كلمات</small></div><div class="today-list">'+today.slice(0,6).map(w=>miniWord(w,p)).join("")+'</div></section><section class="today card"><div class="section-head"><h3>المستوى الحالي</h3><small>'+currentLevel(p).nameEn+'</small></div><div class="progress-block"><div class="progress-label"><span>'+currentLevel(p).nameAr+'</span><b>'+levelProgress(p)+'%</b></div><div class="progress-track"><i style="width:'+levelProgress(p)+'%"></i></div></div><p style="color:var(--muted);font-size:.78rem;line-height:1.7;margin:12px 0 0">الانتقال للمستوى التالي يعتمد على النقاط والاختبارات التي يحددها المعلم.</p></section></aside></div>'+
     '<section class="categories card"><div class="section-head"><h3>عائلات الكلمات</h3><small>يمكن للمعلم إضافة فئات جديدة</small></div><div class="category-grid">'+(c.categories||[]).map(cat=>categoryCard(cat,c.words)).join("")+'</div></section>'
   ,"home");
@@ -252,71 +252,44 @@ function recentTestShuffle(list){
   for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}
   return a;
 }
-function recentStage(index){
-  if(index<5)return {n:1,icon:"🎬",name:"الموقف",desc:"اختاري الكلمة التي تكمل الموقف بشكل طبيعي."};
-  if(index<10)return {n:2,icon:"🔇",name:"المحقق الصامت",desc:"اكتشفي الحرف المكتوب الذي لا نسمعه."};
-  if(index<15)return {n:3,icon:"🎧",name:"اسمعي والتقطيها",desc:"اسمعي الكلمة وحددي معناها الصحيح."};
-  return {n:4,icon:"⚡",name:"التحدي النهائي",desc:"المعنى يظهر بالعربي، وأنتِ تختارين الإنجليزية."};
-}
 function startRecentCombinedTest(){
   applyPrefs();
   if(window.ReemAudio)ReemAudio.stop();
   const status=recentTestStatus(profile());
   if(!status.ready){
-    return shell('<section class="test-card card challenge-lock"><span class="test-icon">🔒</span><span class="eyebrow">تحدّي آخر درسين</span><h1>لسه باقي خطوة</h1><p>التحدي مجهز من 4 مراحل، لكنه ما يفتح إلا بعد إنهاء الدرسين كاملين. المكتمل الآن: <b>'+status.done+' / '+status.total+'</b>.</p><div class="progress-track"><i style="width:'+(status.total?status.done/status.total*100:0)+'%"></i></div><button class="primary" onclick="home()">كمّلي الدرس أول</button></section>',"home",false);
+    return shell('<section class="test-card card"><span class="eyebrow">🔒 اختبار آخر درسين</span><h1>الاختبار مقفول</h1><p>لازم تكمّلين كل كلمات الدرسين أول. المكتمل الآن: '+status.done+' من '+status.total+'.</p><button class="primary" onclick="home()">العودة للدروس</button></section>',"home",false);
   }
   const words=status.words;
-  const first=recentTestShuffle(words.slice(0,10)).slice(0,5);
-  const silent=recentTestShuffle(words.slice(10,20)).slice(0,5);
-  const listen=recentTestShuffle(words.filter(w=>!first.includes(w)&&!silent.includes(w))).slice(0,5);
-  const used=new Set([...first,...silent,...listen].map(w=>w.id));
-  const final=recentTestShuffle(words.filter(w=>!used.has(w.id))).slice(0,5);
-  const questions=[
-    ...first.map(target=>({target,mode:"context"})),
-    ...silent.map(target=>({target,mode:"silent"})),
-    ...listen.map(target=>({target,mode:"listen"})),
-    ...final.map(target=>({target,mode:"ar-to-en"}))
-  ].map(q=>{
-    if(q.mode==="silent"){
-      const letters=[...(q.target.en||"").toLowerCase()].filter(ch=>/[a-z]/.test(ch));
-      const correct=(q.target.silentLetter||letters[0]||"").toLowerCase();
-      const pool=recentTestShuffle([...new Set(letters.filter(x=>x!==correct))]).slice(0,3);
-      while(pool.length<3)pool.push(["a","e","r","n","l"].find(x=>x!==correct&&!pool.includes(x))||"e");
-      return Object.assign(q,{correctId:correct,options:recentTestShuffle([correct,...pool])});
-    }
-    const distractors=recentTestShuffle(words.filter(w=>w.id!==q.target.id)).slice(0,3);
-    return Object.assign(q,{correctId:q.target.id,options:recentTestShuffle([q.target,...distractors])});
+  const questions=recentTestShuffle(words).map((target,index)=>{
+    const distractors=recentTestShuffle(words.filter(w=>w.id!==target.id)).slice(0,3);
+    const modes=["listen","en-to-ar","ar-to-en"];
+    return {target,mode:modes[index%3],options:recentTestShuffle([target,...distractors])};
   });
   __recentCombinedTest={questions,index:0,score:0,answers:[],locked:false};
   renderRecentCombinedTest();
 }
 function renderRecentCombinedTest(){
   if(!__recentCombinedTest)return startRecentCombinedTest();
-  const t=__recentCombinedTest,q=t.questions[t.index],num=t.index+1,total=t.questions.length,stage=recentStage(t.index);
-  let prompt="",audio="",options="";
-  if(q.mode==="context"){
-    const sentence=esc(q.target.exampleEn||"").replace(new RegExp(esc(q.target.en),"i"),"_____");
-    prompt='<div class="challenge-scene">💬</div><h1 dir="ltr">'+sentence+'</h1><p>أي كلمة تجعل الجملة طبيعية؟</p>';
-    options=q.options.map((w,i)=>'<button id="recentTestOpt'+i+'" onclick="answerRecentCombinedTest(\''+w.id+'\','+i+')"><b dir="ltr">'+esc(w.en)+'</b></button>').join("");
-  }else if(q.mode==="silent"){
-    prompt='<div class="challenge-word" dir="ltr">'+esc(q.target.en)+'</div><h1>أي حرف مكتوب لكن لا نسمعه؟</h1><p>ركزي على النطق، مو على شكل الكلمة.</p>';
-    audio='<div class="test-audio"><button class="listen-main" onclick="playRecentTestWord(false)">🔊 اسمعي الكلمة</button><button class="listen-slow" onclick="playRecentTestWord(true)">🐢 ببطء</button></div>';
-    options=q.options.map((letter,i)=>'<button id="recentTestOpt'+i+'" onclick="answerRecentCombinedTest(\''+letter+'\','+i+')"><b class="letter-choice">'+letter.toUpperCase()+'</b></button>').join("");
-  }else if(q.mode==="listen"){
-    prompt='<div class="challenge-scene">🎧</div><h1>اسمعي… وش معناها؟</h1><p>ما راح نظهر لك الكلمة قبل الإجابة.</p>';
-    audio='<div class="test-audio"><button class="listen-main" onclick="playRecentTestWord(false)">▶ اسمعي</button><button class="listen-slow" onclick="playRecentTestWord(true)">🐢 ببطء</button></div>';
-    options=q.options.map((w,i)=>'<button id="recentTestOpt'+i+'" onclick="answerRecentCombinedTest(\''+w.id+'\','+i+')"><b>'+esc(w.ar)+'</b></button>').join("");
+  const t=__recentCombinedTest,q=t.questions[t.index],num=t.index+1,total=t.questions.length;
+  let prompt="",audio="";
+  if(q.mode==="listen"){
+    prompt='<h1>اسمعي واختاري الكلمة الصحيحة</h1><p>اضغطي تشغيل، ثم اختاري الكلمة التي سمعتِها.</p>';
+    audio='<div class="test-audio"><button class="listen-main" onclick="playRecentTestWord(false)">🔊 اسمعي</button><button class="listen-slow" onclick="playRecentTestWord(true)">🐢 أبطأ</button></div>';
+  }else if(q.mode==="en-to-ar"){
+    prompt='<h1>ما معنى <span dir="ltr">'+esc(q.target.en)+'</span>؟</h1><p>اختاري المعنى العربي الصحيح.</p>';
   }else{
-    prompt='<div class="challenge-scene">⚡</div><h1>'+esc(q.target.ar)+'</h1><p>اختاري الكلمة الإنجليزية المناسبة بسرعة.</p>';
-    options=q.options.map((w,i)=>'<button id="recentTestOpt'+i+'" onclick="answerRecentCombinedTest(\''+w.id+'\','+i+')"><b dir="ltr">'+esc(w.en)+'</b></button>').join("");
+    prompt='<h1>'+esc(q.target.ar)+'</h1><p>اختاري الكلمة الإنجليزية الصحيحة.</p>';
   }
-  APP.innerHTML='<main class="student-app"><div class="test-shell challenge-shell">'+
-    '<div class="test-top"><button class="back" onclick="home()">←</button><div><b>'+stage.icon+' المرحلة '+stage.n+': '+stage.name+'</b><small>'+stage.desc+'</small></div><span class="eyebrow">'+num+' / '+total+'</span></div>'+
-    '<div class="stage-dots">'+[1,2,3,4].map(n=>'<i class="'+(n===stage.n?"active":n<stage.n?"done":"")+'">'+(n<stage.n?"✓":n)+'</i>').join("")+'</div>'+
+  const options=q.options.map((w,i)=>{
+    const label=q.mode==="en-to-ar"?esc(w.ar):'<span dir="ltr">'+esc(w.en)+'</span>';
+    return '<button id="recentTestOpt'+i+'" onclick="answerRecentCombinedTest(\''+w.id+'\','+i+')"><b>'+label+'</b></button>';
+  }).join("");
+  APP.innerHTML='<main class="student-app"><div class="test-shell">'+
+    '<div class="test-top"><button class="back" onclick="home()">←</button><div><b>اختبار آخر درسين</b><small>20 كلمة • سؤال واضح في كل مرة</small></div><span class="eyebrow">'+num+' / '+total+'</span></div>'+
     '<section class="test-card card"><div class="progress-track"><i style="width:'+(num/total*100)+'%"></i></div>'+
-    '<div class="test-question">'+prompt+audio+'<div class="test-options">'+options+'</div>'+
-    '<div id="recentTestFeedback" class="test-feedback"></div>'+
-    '<button id="recentTestNext" class="primary test-next" onclick="nextRecentCombinedTest()" disabled>'+(num===total?"شوفي النتيجة 🏁":num%5===0?"افتحي المرحلة التالية →":"التالي →")+'</button>'+
+    '<div class="test-question"><span class="test-icon">'+(q.mode==="listen"?"🎧":"📝")+'</span>'+prompt+audio+
+    '<div class="test-options">'+options+'</div><div id="recentTestFeedback" class="test-feedback"></div>'+
+    '<button id="recentTestNext" class="primary test-next" onclick="nextRecentCombinedTest()" disabled>'+(num===total?"عرض النتيجة":"التالي →")+'</button>'+
     '</div></section></div></main>';
 }
 function playRecentTestWord(slow){
@@ -328,41 +301,41 @@ function answerRecentCombinedTest(id,optionIndex){
   if(!__recentCombinedTest||__recentCombinedTest.locked)return;
   __recentCombinedTest.locked=true;
   const q=__recentCombinedTest.questions[__recentCombinedTest.index];
-  const correct=String(id).toLowerCase()===String(q.correctId).toLowerCase();
+  const correct=id===q.target.id;
   if(correct)__recentCombinedTest.score++;
   __recentCombinedTest.answers.push({wordId:q.target.id,selectedId:id,correct,mode:q.mode});
-  q.options.forEach((opt,i)=>{
-    const oid=typeof opt==="string"?opt:opt.id;
+  q.options.forEach((w,i)=>{
     const b=document.getElementById("recentTestOpt"+i);
     if(!b)return;b.disabled=true;
-    if(String(oid).toLowerCase()===String(q.correctId).toLowerCase())b.classList.add("correct");
+    if(w.id===q.target.id)b.classList.add("correct");
     else if(i===optionIndex&&!correct)b.classList.add("wrong");
   });
   const f=document.getElementById("recentTestFeedback");
-  if(f)f.innerHTML=correct?'✨ <b>صح!</b>':(q.mode==="silent"?'🔎 الحرف الصامت هو <b>'+esc(q.target.silentLetter||q.correctId).toUpperCase()+'</b> في <b dir="ltr">'+esc(q.target.en)+'</b>':'❌ الصحيح: <b dir="ltr">'+esc(q.target.en)+'</b> — '+esc(q.target.ar));
+  if(f)f.innerHTML=correct?'✅ <b>إجابة صحيحة</b>':'❌ الصحيح: <b dir="ltr">'+esc(q.target.en)+'</b> — '+esc(q.target.ar);
   const n=document.getElementById("recentTestNext");if(n)n.disabled=false;
 }
 function nextRecentCombinedTest(){
   if(!__recentCombinedTest||!__recentCombinedTest.locked)return;
   if(__recentCombinedTest.index<__recentCombinedTest.questions.length-1){
     __recentCombinedTest.index++;__recentCombinedTest.locked=false;renderRecentCombinedTest();
-    if(__recentCombinedTest.questions[__recentCombinedTest.index].mode==="listen")setTimeout(()=>playRecentTestWord(false),300);
   }else finishRecentCombinedTest();
 }
 function finishRecentCombinedTest(){
   if(!__recentCombinedTest)return;
   if(window.ReemAudio)ReemAudio.stop();
-  const t=__recentCombinedTest,total=t.questions.length,score=t.score,pct=Math.round(score/total*100),wrong=t.answers.filter(a=>!a.correct),words=recentTestWords();
-  const p=profile();p.completedTests=(p.completedTests||0)+1;p.points=(p.points||0)+score*2;ReemStore.saveProfile(p);
+  const t=__recentCombinedTest,total=t.questions.length,score=t.score,pct=Math.round(score/total*100);
+  const wrong=t.answers.filter(a=>!a.correct),p=profile(),words=recentTestWords();
+  p.completedTests=(p.completedTests||0)+1;p.points=(p.points||0)+score*2;ReemStore.saveProfile(p);
   const subs=ReemStore.getSubmissions();
-  subs.push({id:"challenge-2610-2810-"+Date.now(),type:"four-stage-vocabulary-challenge",title:"تحدّي آخر درسين — 26/10 + 28/10",score,total,percent:pct,answers:t.answers,submittedAt:new Date().toISOString()});
+  subs.push({id:"recent-two-lessons-"+Date.now(),type:"mixed-two-lesson-test",title:"اختبار آخر درسين — 26/10 + 28/10",score,total,percent:pct,answers:t.answers,submittedAt:new Date().toISOString()});
   ReemStore.saveSubmissions(subs);
   APP.innerHTML='<main class="student-app"><div class="test-shell"><section class="test-card result-card card">'+
-    '<div class="result-ring"><strong>'+pct+'%</strong><span>'+score+' / '+total+'</span></div><span class="eyebrow">🏁 انتهت الرحلة</span>'+
-    '<h1>'+(pct>=90?"بطلة التحدّي 🏆":pct>=75?"ممتاز، باقي تثبيت بسيط ✨":"نرجع للكلمات الصعبة ونكسب الجولة الجاية")+'</h1>'+
-    '<p>أكملتِ 4 مراحل مختلفة: المواقف، الحروف الصامتة، الاستماع، والتحدي النهائي.</p>'+
-    (wrong.length?'<div class="wrong-review"><b>هذه الكلمات تحتاج جولة ثانية</b><div>'+wrong.map(a=>{const w=words.find(x=>x.id===a.wordId);return '<span dir="ltr">'+esc(w?w.en:a.wordId)+'</span>'}).join("")+'</div></div>':'<div class="test-feedback success">🔥 20/20 — ما تركتِ ولا كلمة!</div>')+
-    '<div class="result-actions"><button class="primary" onclick="startRecentCombinedTest()">إعادة التحدي</button><button class="ghost" onclick="home()">الرئيسية</button></div></section></div></main>';
+    '<div class="result-ring"><strong>'+pct+'%</strong><span>'+score+' / '+total+'</span></div>'+
+    '<span class="eyebrow">📝 نتيجة اختبار آخر درسين</span><h1>'+(pct>=80?"ممتاز 👏":"كويس، نراجع الكلمات اللي تحتاج تثبيت")+'</h1>'+
+    '<p>الاختبار غطّى كلمات آخر درسين كاملة.</p>'+
+    (wrong.length?'<div class="wrong-review"><b>الكلمات التي تحتاج مراجعة</b><div>'+wrong.map(a=>{const w=words.find(x=>x.id===a.wordId);return '<span dir="ltr">'+esc(w?w.en:a.wordId)+'</span>'}).join("")+'</div></div>':'<div class="test-feedback success">🏆 كل الإجابات صحيحة!</div>')+
+    '<div class="result-actions"><button class="primary" onclick="startRecentCombinedTest()">إعادة الاختبار</button><button class="ghost" onclick="home()">الرئيسية</button></div>'+
+    '</section></div></main>';
 }
 
 let __lessonQuiz=null;
