@@ -139,7 +139,7 @@ function home(){
   const p=profile(),c=content(),prog=courseProgress(p),left=Math.max(0,100-prog),lesson=activeLesson(p),today=lesson.words,recentTest=recentTestStatus(p);
   shell(
     '<div class="topbar"><div class="welcome"><span class="eyebrow">✨ '+ordinalDay(dayNumber(p))+'</span><h1>أهلاً وسهلاً بك يا '+esc(p.name)+'</h1><p>كل يوم كلمات عملية من الحياة اليومية، بصور ونطق وجملة واضحة.</p></div>'+topSummary(p)+'</div>'+
-    '<div class="layout"><section class="hero card"><div class="hero-content"><span class="eyebrow">'+lesson.icon+' '+lesson.label+' • '+lesson.categoryName+'</span><h2>'+lesson.words.length+' كلمة جديدة</h2><p>'+lesson.intro+'</p><div class="hero-actions"><button class="primary" onclick="startStudy(0,\''+lesson.categoryId+'\')">ابدئي كلمات اليوم ▶</button>'+(recentTest.ready?'<button class="secondary" onclick="startRecentCombinedTest()">📝 اختبار آخر درسين — 20 كلمة</button>':'<button class="secondary" disabled>🔒 اختبار آخر درسين — '+recentTest.done+'/'+recentTest.total+' مكتملة</button>')+'<button class="ghost" onclick="wordsPage()">شوفي الكلمات كلها</button></div><div class="progress-block"><div class="progress-label"><span>التقدم الكلي</span><b>'+prog+'% • المتبقي '+left+'%</b></div><div class="progress-track"><i style="width:'+prog+'%"></i></div></div></div></section>'+
+    '<div class="layout"><section class="hero card"><div class="hero-content"><span class="eyebrow">'+lesson.icon+' '+lesson.label+' • '+lesson.categoryName+'</span><h2>'+lesson.words.length+' كلمة جديدة</h2><p>'+lesson.intro+'</p><div class="hero-actions"><button class="primary" onclick="startDailyReview()">🔁 مراجعة اليوم — 20 كلمة</button><button class="primary" onclick="startStudy(0,\''+lesson.categoryId+'\')">ابدئي كلمات اليوم ▶</button>'+(recentTest.ready?'<button class="secondary" onclick="startRecentCombinedTest()">📝 اختبار آخر درسين — 20 كلمة</button>':'<button class="secondary" disabled>🔒 اختبار آخر درسين — '+recentTest.done+'/'+recentTest.total+' مكتملة</button>')+'<button class="ghost" onclick="wordsPage()">شوفي الكلمات كلها</button></div><div class="progress-block"><div class="progress-label"><span>التقدم الكلي</span><b>'+prog+'% • المتبقي '+left+'%</b></div><div class="progress-track"><i style="width:'+prog+'%"></i></div></div></div></section>'+
     '<aside class="side-stack"><section class="today card"><div class="section-head"><h3>كلمات اليوم</h3><small>'+today.length+' كلمات</small></div><div class="today-list">'+today.slice(0,6).map(w=>miniWord(w,p)).join("")+'</div></section><section class="today card"><div class="section-head"><h3>المستوى الحالي</h3><small>'+currentLevel(p).nameEn+'</small></div><div class="progress-block"><div class="progress-label"><span>'+currentLevel(p).nameAr+'</span><b>'+levelProgress(p)+'%</b></div><div class="progress-track"><i style="width:'+levelProgress(p)+'%"></i></div></div><p style="color:var(--muted);font-size:.78rem;line-height:1.7;margin:12px 0 0">الانتقال للمستوى التالي يعتمد على النقاط والاختبارات التي يحددها المعلم.</p></section></aside></div>'+
     '<section class="categories card"><div class="section-head"><h3>عائلات الكلمات</h3><small>يمكن للمعلم إضافة فئات جديدة</small></div><div class="category-grid">'+(c.categories||[]).map(cat=>categoryCard(cat,c.words)).join("")+'</div></section>'
   ,"home");
@@ -244,6 +244,43 @@ function nextWord(i,categoryId){
   const status=recentTestStatus(profile());
   if(status.ready && (categoryId==="errands"||categoryId==="daily-talk"))return startRecentCombinedTest();
   home();
+}
+
+let __dailyReview=null;
+function reviewShuffle(list){const a=list.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a;}
+function reviewWords(){
+ const p=profile(),all=(content().words||[]).filter(w=>p.learnedWordIds.includes(w.id)),r=new Set(p.reviewWordIds||[]);
+ const recent=new Set(["instead","unless","enough","supposed-to","figure-out","depends","bother","realize","prefer","manage","although","somehow","otherwise","apparently","eventually","afford","remind","expect","avoid","worth-it","knife","knee","wrist","honest","hour","receipt-silent","aisle-silent","answer","listen","often"]);
+ const groups=[reviewShuffle(all.filter(w=>r.has(w.id))),reviewShuffle(all.filter(w=>recent.has(w.id)&&!r.has(w.id))),reviewShuffle(all.filter(w=>!recent.has(w.id)&&!r.has(w.id)))],picked=[],ids=new Set();
+ for(const group of groups)for(const w of group){if(picked.length>=20)break;if(!ids.has(w.id)){picked.push(w);ids.add(w.id)}}
+ return picked.slice(0,20);
+}
+function startDailyReview(){
+ applyPrefs();if(window.ReemAudio)ReemAudio.stop();const words=reviewWords();
+ const questions=words.map((target,index)=>{const pool=(content().words||[]).filter(w=>w.id!==target.id&&profile().learnedWordIds.includes(w.id));return {target,mode:["listen","ar-to-en","en-to-ar"][index%3],options:reviewShuffle([target,...reviewShuffle(pool).slice(0,3)])};});
+ __dailyReview={questions,index:0,score:0,answers:[],locked:false};renderDailyReview();
+}
+function renderDailyReview(){
+ const t=__dailyReview,q=t.questions[t.index],num=t.index+1,total=t.questions.length;let title="",sub="",audio="";
+ if(q.mode==="listen"){title="اسمعي واختاري الكلمة";sub="ركزي على النطق ثم اختاري الكلمة الصحيحة.";audio='<div class="test-audio"><button class="listen-main" onclick="playDailyReview(false)">🔊 اسمعي</button><button class="listen-slow" onclick="playDailyReview(true)">🐢 أبطأ</button></div>';}
+ else if(q.mode==="ar-to-en"){title=esc(q.target.ar);sub="اختاري الكلمة الإنجليزية الصحيحة.";}
+ else{title='ما معنى <span dir="ltr">'+esc(q.target.en)+'</span>؟';sub="اختاري المعنى العربي الصحيح.";}
+ const options=q.options.map((w,i)=>'<button id="reviewOpt'+i+'" onclick="answerDailyReview(\''+w.id+'\','+i+')"><b>'+(q.mode==="en-to-ar"?esc(w.ar):'<span dir="ltr">'+esc(w.en)+'</span>')+'</b></button>').join("");
+ APP.innerHTML='<main class="student-app"><div class="test-shell"><div class="test-top"><button class="back" onclick="home()">←</button><div><b>مراجعة اليوم 31/10</b><small>20 كلمة من الدروس السابقة</small></div><span class="eyebrow">'+num+' / '+total+'</span></div><section class="test-card card"><div class="progress-track"><i style="width:'+(num/total*100)+'%"></i></div><div class="test-question"><span class="test-icon">'+(q.mode==="listen"?"🎧":"🧠")+'</span><h1>'+title+'</h1><p>'+sub+'</p>'+audio+'<div class="test-options">'+options+'</div><div id="reviewFeedback" class="test-feedback"></div><button id="reviewNext" class="primary test-next" onclick="nextDailyReview()" disabled>'+(num===total?"نتيجة المراجعة":"التالي →")+'</button></div></section></div></main>';
+}
+function playDailyReview(slow){if(__dailyReview&&window.ReemAudio)ReemAudio.speak(__dailyReview.questions[__dailyReview.index].target.en,!!slow);}
+function answerDailyReview(id,i){
+ if(!__dailyReview||__dailyReview.locked)return;__dailyReview.locked=true;const q=__dailyReview.questions[__dailyReview.index],correct=id===q.target.id;if(correct)__dailyReview.score++;
+ __dailyReview.answers.push({wordId:q.target.id,selectedId:id,correct,mode:q.mode});
+ q.options.forEach((w,n)=>{const b=document.getElementById("reviewOpt"+n);if(!b)return;b.disabled=true;if(w.id===q.target.id)b.classList.add("correct");else if(n===i&&!correct)b.classList.add("wrong");});
+ document.getElementById("reviewFeedback").innerHTML=correct?'✅ <b>صح، ممتاز</b>':'↻ الصحيح: <b dir="ltr">'+esc(q.target.en)+'</b> — '+esc(q.target.ar);document.getElementById("reviewNext").disabled=false;
+}
+function nextDailyReview(){if(!__dailyReview||!__dailyReview.locked)return;if(__dailyReview.index<__dailyReview.questions.length-1){__dailyReview.index++;__dailyReview.locked=false;renderDailyReview();}else finishDailyReview();}
+function finishDailyReview(){
+ const t=__dailyReview,p=profile(),wrong=t.answers.filter(a=>!a.correct),correctIds=new Set(t.answers.filter(a=>a.correct).map(a=>a.wordId));
+ wrong.forEach(a=>{if(!p.reviewWordIds.includes(a.wordId))p.reviewWordIds.push(a.wordId)});p.reviewWordIds=(p.reviewWordIds||[]).filter(id=>!correctIds.has(id)||wrong.some(a=>a.wordId===id));ReemStore.saveProfile(p);
+ const subs=ReemStore.getSubmissions();subs.push({id:"review-3110-"+Date.now(),type:"daily-review",title:"مراجعة 31/10",score:t.score,total:t.questions.length,percent:Math.round(t.score/t.questions.length*100),answers:t.answers,submittedAt:new Date().toISOString()});ReemStore.saveSubmissions(subs);
+ const byId=Object.fromEntries((content().words||[]).map(w=>[w.id,w]));APP.innerHTML='<main class="student-app"><div class="test-shell"><section class="test-card result-card card"><div class="result-ring"><strong>'+Math.round(t.score/t.questions.length*100)+'%</strong><span>'+t.score+' / '+t.questions.length+'</span></div><span class="eyebrow">🔁 مراجعة اليوم</span><h1>خلصنا المراجعة 👏</h1><p>أي كلمة أخطأتِ فيها انضافت تلقائيًا للمراجعة القادمة.</p>'+(wrong.length?'<div class="wrong-review"><b>نثبتها المرة الجاية</b><div>'+wrong.map(a=>'<span dir="ltr">'+esc((byId[a.wordId]||{}).en||a.wordId)+'</span>').join("")+'</div></div>':'<div class="test-feedback success">🏆 ممتاز، كل الإجابات صحيحة!</div>')+'<button class="primary" onclick="home()">الرئيسية</button></section></div></main>';
 }
 
 let __recentCombinedTest=null;
